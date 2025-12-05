@@ -28,7 +28,7 @@
         "async-aws/bedrock-runtime": "^1.1",
         "codewithkyrian/chromadb-php": "^0.4.0",
         "codewithkyrian/transformers": "^0.6.2",
-        "doctrine/dbal": "^3.3 || ^4.0",
+        "doctrine/dbal": "^3.3|^4.0",
         "google/auth": "^1.47",
         "mongodb/mongodb": "^2.1",
         "mrmysql/youtube-transcript": "^0.0.5",
