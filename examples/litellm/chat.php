@@ -9,13 +9,35 @@
  * file that was distributed with this source code.
  */
 
-use Symfony\AI\Platform\Bridge\LiteLlm\PlatformFactory;
+use Symfony\AI\Platform\Bridge\Generic\CompletionsModel;
+use Symfony\AI\Platform\Bridge\Generic\ModelCatalog;
+use Symfony\AI\Platform\Bridge\Generic\PlatformFactory;
+use Symfony\AI\Platform\Capability;
 use Symfony\AI\Platform\Message\Message;
 use Symfony\AI\Platform\Message\MessageBag;
 
 require_once dirname(__DIR__).'/bootstrap.php';
 
-$platform = PlatformFactory::create(env('LITELLM_HOST_URL'), env('LITELLM_API_KEY'), http_client());
+$modelCatalog = new ModelCatalog([
+    'mistral-small-latest' => [
+        'class' => CompletionsModel::class,
+        'capabilities' => [
+            Capability::INPUT_MESSAGES,
+            Capability::OUTPUT_TEXT,
+            Capability::OUTPUT_STREAMING,
+            Capability::OUTPUT_STRUCTURED,
+            Capability::INPUT_IMAGE,
+            Capability::TOOL_CALLING,
+        ],
+    ],
+]);
+
+$platform = PlatformFactory::create(
+    env('LITELLM_HOST_URL'),
+    env('LITELLM_API_KEY'),
+    http_client(),
+    $modelCatalog,
+);
 
 $messages = new MessageBag(
     Message::forSystem('You are a pirate and you write funny.'),
