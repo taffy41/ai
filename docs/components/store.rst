@@ -63,7 +63,7 @@ Similarity Search Examples
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * `Similarity Search with Cloudflare (RAG)`_
-* `Similarity Search with Manticore (RAG)`_
+* `Similarity Search with Manticore Search (RAG)`_
 * `Similarity Search with MariaDB (RAG)`_
 * `Similarity Search with Meilisearch (RAG)`_
 * `Similarity Search with memory storage (RAG)`_
@@ -92,7 +92,7 @@ Supported Stores
 * `Chroma`_ (requires ``codewithkyrian/chromadb-php`` as additional dependency)
 * `Cloudflare`_
 * `InMemory`_
-* `Manticore`_
+* `Manticore Search`_
 * `MariaDB`_ (requires ``ext-pdo``)
 * `Meilisearch`_
 * `Milvus`_
@@ -160,7 +160,7 @@ This leads to a store implementing two methods::
 .. _`Retrieval Augmented Generation`: https://en.wikipedia.org/wiki/Retrieval-augmented_generation
 .. _`Basic Retriever Example`: https://github.com/symfony/ai/blob/main/examples/retriever/basic.php
 .. _`Similarity Search with Cloudflare (RAG)`: https://github.com/symfony/ai/blob/main/examples/rag/cloudflare.php
-.. _`Similarity Search with Manticore (RAG)`: https://github.com/symfony/ai/blob/main/examples/rag/manticore.php
+.. _`Similarity Search with Manticore Search (RAG)`: https://github.com/symfony/ai/blob/main/examples/rag/manticore.php
 .. _`Similarity Search with MariaDB (RAG)`: https://github.com/symfony/ai/blob/main/examples/rag/mariadb-gemini.php
 .. _`Similarity Search with Meilisearch (RAG)`: https://github.com/symfony/ai/blob/main/examples/rag/meilisearch.php
 .. _`Similarity Search with memory storage (RAG)`: https://github.com/symfony/ai/blob/main/examples/rag/in-memory.php
@@ -178,7 +178,7 @@ This leads to a store implementing two methods::
 .. _`Azure AI Search`: https://azure.microsoft.com/products/ai-services/ai-search
 .. _`Chroma`: https://www.trychroma.com/
 .. _`Cloudflare`: https://developers.cloudflare.com/vectorize/
-.. _`Manticore`: https://manticoresearch.com/
+.. _`Manticore Search`: https://manticoresearch.com/
 .. _`MariaDB`: https://mariadb.org/projects/mariadb-vector/
 .. _`Pinecone`: https://www.pinecone.io/
 .. _`Postgres`: https://www.postgresql.org/about/news/pgvector-070-released-2852/

@@ -17,7 +17,7 @@ use MongoDB\Client as MongoDbClient;
 use Symfony\AI\Store\Bridge\ClickHouse\Store as ClickHouseStore;
 use Symfony\AI\Store\Bridge\Local\CacheStore;
 use Symfony\AI\Store\Bridge\Local\InMemoryStore;
-use Symfony\AI\Store\Bridge\Manticore\Store as ManticoreStore;
+use Symfony\AI\Store\Bridge\ManticoreSearch\Store as ManticoreSearchStore;
 use Symfony\AI\Store\Bridge\MariaDb\Store as MariaDbStore;
 use Symfony\AI\Store\Bridge\Meilisearch\Store as MeilisearchStore;
 use Symfony\AI\Store\Bridge\Milvus\Store as MilvusStore;
@@ -47,9 +47,9 @@ $factories = [
         env('CLICKHOUSE_DATABASE'),
         env('CLICKHOUSE_TABLE'),
     ),
-    'manticore' => static fn (): ManticoreStore => new ManticoreStore(
+    'manticoresearch' => static fn (): ManticoreSearchStore => new ManticoreSearchStore(
         http_client(),
-        env('MANTICORE_HOST'),
+        env('MANTICORESEARCH_HOST'),
         'symfony',
         '_vectors',
     ),

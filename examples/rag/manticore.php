@@ -17,7 +17,7 @@ use Symfony\AI\Fixtures\Movies;
 use Symfony\AI\Platform\Bridge\OpenAi\PlatformFactory;
 use Symfony\AI\Platform\Message\Message;
 use Symfony\AI\Platform\Message\MessageBag;
-use Symfony\AI\Store\Bridge\Manticore\Store;
+use Symfony\AI\Store\Bridge\ManticoreSearch\Store;
 use Symfony\AI\Store\Document\Loader\InMemoryLoader;
 use Symfony\AI\Store\Document\Metadata;
 use Symfony\AI\Store\Document\TextDocument;
