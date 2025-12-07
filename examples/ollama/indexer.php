@@ -10,7 +10,7 @@
  */
 
 use Symfony\AI\Platform\Bridge\Ollama\PlatformFactory;
-use Symfony\AI\Store\Bridge\Local\InMemoryStore;
+use Symfony\AI\Store\Bridge\InMemory\Store as InMemoryStore;
 use Symfony\AI\Store\Document\Loader\TextFileLoader;
 use Symfony\AI\Store\Document\Transformer\TextReplaceTransformer;
 use Symfony\AI\Store\Document\Transformer\TextSplitTransformer;
