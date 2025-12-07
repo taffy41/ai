@@ -102,7 +102,7 @@ Advanced Example with Multiple Agents
                 model: 'text-to-speech'
                 tools: false
         store:
-            chroma_db:
+            chromadb:
                 # multiple collections possible per type
                 default:
                     collection: 'my_collection'
@@ -129,7 +129,7 @@ Advanced Example with Multiple Agents
             default:
                 loader: 'Symfony\AI\Store\Document\Loader\InMemoryLoader'
                 vectorizer: 'ai.vectorizer.openai_embeddings'
-                store: 'ai.store.chroma_db.default'
+                store: 'ai.store.chromadb.default'
 
             research:
                 loader: 'Symfony\AI\Store\Document\Loader\TextFileLoader'
@@ -212,7 +212,7 @@ For each configured store, the bundle automatically creates two types of aliases
                     strategy: 'cosine'
                 products:
                     strategy: 'manhattan'
-            chroma_db:
+            chromadb:
                 main:
                     collection: 'documents'
 
@@ -220,7 +220,7 @@ From the configuration above, the following aliases are automatically registered
 
 - ``StoreInterface $main`` - References the memory store (first occurrence)
 - ``StoreInterface $memoryMain`` - Explicitly references the memory store
-- ``StoreInterface $chromaDbMain`` - Explicitly references the chroma_db store
+- ``StoreInterface $chromadbMain`` - Explicitly references the chromadb store
 - ``StoreInterface $products`` - References the memory products store
 - ``StoreInterface $memoryProducts`` - Explicitly references the memory products store
 
@@ -232,14 +232,14 @@ You can inject stores into your services using the generated aliases::
     {
         public function __construct(
             private StoreInterface $main,              // Uses memory store (first occurrence)
-            private StoreInterface $chromaDbMain,      // Explicitly uses chroma_db store
+            private StoreInterface $chromadbMain,      // Explicitly uses chromadb store
             private StoreInterface $memoryProducts,    // Explicitly uses memory products store
         ) {
         }
     }
 
 When multiple stores share the same name (like ``main`` in the example), the simple alias (``$main``) will reference the first occurrence.
-Use type-prefixed aliases (``$memoryMain``, ``$chromaDbMain``) for explicit disambiguation.
+Use type-prefixed aliases (``$memoryMain``, ``$chromadbMain``) for explicit disambiguation.
 
 Model Configuration
 -------------------
@@ -692,8 +692,8 @@ The ``ai:store:setup`` command prepares the required infrastructure for a store 
 
     $ php bin/console ai:store:setup <store>
 
-    # Setup the chroma_db store
-    $ php bin/console ai:store:setup chroma_db.default
+    # Setup the chromadb store
+    $ php bin/console ai:store:setup chromadb.default
 
 .. note::
 
@@ -709,8 +709,8 @@ The ``ai:store:drop`` command drops the infrastructure for a store (e.g., remove
 
     $ php bin/console ai:store:drop <store> --force
 
-    # Drop the chroma_db store
-    $ php bin/console ai:store:drop chroma_db.default --force
+    # Drop the chromadb store
+    $ php bin/console ai:store:drop chromadb.default --force
 
 .. warning::
 
@@ -987,12 +987,12 @@ Once configured, vectorizers can be referenced by name in indexer configurations
             documents:
                 loader: 'Symfony\AI\Store\Document\Loader\TextFileLoader'
                 vectorizer: 'ai.vectorizer.openai_small'
-                store: 'ai.store.chroma_db.documents'
+                store: 'ai.store.chromadb.documents'
 
             research:
                 loader: 'Symfony\AI\Store\Document\Loader\TextFileLoader'
                 vectorizer: 'ai.vectorizer.openai_large'
-                store: 'ai.store.chroma_db.research'
+                store: 'ai.store.chromadb.research'
 
             knowledge_base:
                 loader: 'Symfony\AI\Store\Document\Loader\InMemoryLoader'
@@ -1024,7 +1024,7 @@ Retrievers are defined in the ``retriever`` section of your configuration:
         retriever:
             default:
                 vectorizer: 'ai.vectorizer.openai_small'
-                store: 'ai.store.chroma_db.default'
+                store: 'ai.store.chromadb.default'
 
             research:
                 vectorizer: 'ai.vectorizer.mistral_embed'

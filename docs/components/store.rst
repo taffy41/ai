@@ -119,7 +119,7 @@ you can use the ``bin/console ai:store:setup`` command to initialize the store a
         # ...
 
         store:
-            chroma_db:
+            chromadb:
                 symfonycon:
                     collection: 'symfony_blog'
 

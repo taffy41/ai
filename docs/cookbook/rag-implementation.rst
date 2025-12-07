@@ -289,7 +289,7 @@ When using the AI Bundle, configure RAG with YAML:
                 model: 'text-embedding-3-small'
 
         store:
-            chroma_db:
+            chromadb:
                 knowledge_base:
                     collection: 'docs'
 
@@ -297,7 +297,7 @@ When using the AI Bundle, configure RAG with YAML:
             docs:
                 loader: 'App\Document\Loader\DocLoader'
                 vectorizer: 'ai.vectorizer.default'
-                store: 'ai.store.chroma_db.knowledge_base'
+                store: 'ai.store.chromadb.knowledge_base'
 
         agent:
             rag_assistant:
@@ -311,7 +311,7 @@ Then use the indexer command to populate your store:
 
 .. code-block:: terminal
 
-    $ php bin/console ai:store:setup chroma_db.knowledge_base
+    $ php bin/console ai:store:setup chromadb.knowledge_base
     $ php bin/console ai:store:index docs
 
 Performance Optimization
