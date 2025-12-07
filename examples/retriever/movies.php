@@ -11,12 +11,12 @@
 
 use Symfony\AI\Fixtures\Movies;
 use Symfony\AI\Platform\Bridge\OpenAi\PlatformFactory;
-use Symfony\AI\Store\Bridge\InMemory\Store as InMemoryStore;
 use Symfony\AI\Store\Document\Loader\InMemoryLoader;
 use Symfony\AI\Store\Document\Metadata;
 use Symfony\AI\Store\Document\TextDocument;
 use Symfony\AI\Store\Document\Vectorizer;
 use Symfony\AI\Store\Indexer;
+use Symfony\AI\Store\InMemory\Store as InMemoryStore;
 use Symfony\AI\Store\Retriever;
 use Symfony\Component\Uid\Uuid;
 
