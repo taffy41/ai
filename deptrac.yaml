@@ -56,7 +56,43 @@ deptrac:
     - name: ChatComponent
       collectors:
         - type: classLike
-          value: Symfony\\AI\\Chat.*
+          value: ^Symfony\\AI\\Chat\\(?!Bridge\\).*
+    - name: ChatCacheBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Chat\\Bridge\\Cache\\.*
+    - name: ChatCloudflareBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Chat\\Bridge\\Cloudflare\\.*
+    - name: ChatDoctrineBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Chat\\Bridge\\Doctrine\\.*
+    - name: ChatHttpFoundationBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Chat\\Bridge\\HttpFoundation\\.*
+    - name: ChatMeilisearchBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Chat\\Bridge\\Meilisearch\\.*
+    - name: ChatMongoDbBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Chat\\Bridge\\MongoDb\\.*
+    - name: ChatPogocacheBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Chat\\Bridge\\Pogocache\\.*
+    - name: ChatRedisBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Chat\\Bridge\\Redis\\.*
+    - name: ChatSurrealDbBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Chat\\Bridge\\SurrealDb\\.*
     - name: PlatformComponent
       collectors:
         - type: classLike
@@ -177,6 +213,33 @@ deptrac:
       - AgentComponent
     ChatComponent:
       - AgentComponent
+      - PlatformComponent
+    ChatCacheBridge:
+      - ChatComponent
+      - PlatformComponent
+    ChatCloudflareBridge:
+      - ChatComponent
+      - PlatformComponent
+    ChatDoctrineBridge:
+      - ChatComponent
+      - PlatformComponent
+    ChatHttpFoundationBridge:
+      - ChatComponent
+      - PlatformComponent
+    ChatMeilisearchBridge:
+      - ChatComponent
+      - PlatformComponent
+    ChatMongoDbBridge:
+      - ChatComponent
+      - PlatformComponent
+    ChatPogocacheBridge:
+      - ChatComponent
+      - PlatformComponent
+    ChatRedisBridge:
+      - ChatComponent
+      - PlatformComponent
+    ChatSurrealDbBridge:
+      - ChatComponent
       - PlatformComponent
     PlatformComponent: ~
     StoreComponent:
