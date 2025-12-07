@@ -136,6 +136,40 @@ Advanced Example with Multiple Agents
                 vectorizer: 'ai.vectorizer.mistral_embeddings'
                 store: 'ai.store.memory.research'
 
+Generic Platform
+----------------
+
+Based on the generic bridge, you can configure any service, that complies with the original OpenAI API, like LiteLLM:
+
+.. code-block:: yaml
+
+    # config/packages/ai.yaml
+    ai:
+        platform:
+            generic:
+                litellm:
+                    base_url: '%env(LITELLM_HOST_URL)%' # e.g. http://localhost:4000
+                    api_key: '%env(LITELLM_API_KEY)%' # e.g. sk-1234
+                    model_catalog: 'Symfony\AI\Platform\Bridge\Generic\ModelCatalog' # see below
+        agent:
+            test:
+                platform: 'ai.platform.generic.litellm'
+                model: 'mistral-small-latest'
+                tools: false
+
+    services:
+        Symfony\AI\Platform\Bridge\Generic\ModelCatalog:
+            $models:
+                mistral-small-latest:
+                    class: 'Symfony\AI\Platform\Bridge\Generic\CompletionsModel'
+                    capabilities:
+                        - !php/const 'Symfony\AI\Platform\Capability::INPUT_MESSAGES'
+                        - !php/const 'Symfony\AI\Platform\Capability::OUTPUT_TEXT'
+                        - !php/const 'Symfony\AI\Platform\Capability::OUTPUT_STREAMING'
+                        - !php/const 'Symfony\AI\Platform\Capability::OUTPUT_STRUCTURED'
+                        - !php/const 'Symfony\AI\Platform\Capability::INPUT_IMAGE'
+                        - !php/const 'Symfony\AI\Platform\Capability::TOOL_CALLING'
+
 Cached Platform
 ---------------
 

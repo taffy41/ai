@@ -106,7 +106,7 @@ When using the bundle, the usage of ``OllamaApiCatalog`` is available via the ``
                 api_catalog: true
 
 Supported Models & Platforms
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 * **Language Models**
     * `OpenAI's GPT`_ with `OpenAI`_, `Azure`_ and `OpenRouter`_ as Platform
@@ -135,6 +135,31 @@ Supported Models & Platforms
 * **Voice Models**
     * `Cartesia TTS`_ with `Cartesia`_ as Platform
     * `Cartesia STT`_ with `Cartesia`_ as Platform
+
+Generic Platforms
+~~~~~~~~~~~~~~~~~
+
+Platforms like `LiteLLM`_ or `OpenRouter`_ provide a unified API to access multiple models from different providers.
+Therefore, they rely on endpoint and contract design, that is inspired by OpenAI's original GPT API - an implicit
+standard in the industry. Platforms using this de facto standard can be used with the generic bridge::
+
+    use Symfony\AI\Platform\Bridge\Generic\PlatformFactory;
+    use Symfony\AI\Platform\Message\Message;
+    use Symfony\AI\Platform\Message\MessageBag;
+
+    $platform = PlatformFactory::create('https://api.example.com', 'sk-xxxxxx', $httpClient, $modelCatalog);
+
+    $messages = new MessageBag(
+        Message::forSystem('You are a pirate and you write funny.'),
+        Message::ofUser('What is the Symfony framework?'),
+    );
+    $result = $platform->invoke('model-name', $messages);
+
+    echo $result->asText();
+
+This requires to configure a :class:`Symfony\\AI\\Platform\\Bridge\\Generic\\ModelCatalog` explicitly, using
+:class:`Symfony\\AI\\Platform\\Bridge\\Generic\\CompletionsModel` or :class:`Symfony\\AI\\Platform\\Bridge\\Generic\\EmbeddingsModel`,
+see `LiteLLM example`_ for more details.
 
 Options
 -------
@@ -524,6 +549,7 @@ Code Examples
 .. _`Cartesia`: https://cartesia.ai/
 .. _`Cartesia STT`: https://cartesia.ai/ink
 .. _`Cartesia TTS`: https://cartesia.ai/sonic
+.. _`LiteLLM example`: https://github.com/symfony/ai/blob/main/examples/litellm/chat.php
 .. _`Meta's Llama`: https://www.llama.com/
 .. _`Ollama`: https://ollama.com/
 .. _`Replicate`: https://replicate.com/
