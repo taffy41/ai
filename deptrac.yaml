@@ -64,7 +64,11 @@ deptrac:
     - name: StoreComponent
       collectors:
         - type: classLike
-          value: Symfony\\AI\\Store.*
+          value: ^Symfony\\AI\\Store\\(?!Bridge\\).*
+    - name: ChromaDbStore
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Store\\Bridge\\ChromaDb\\.*
   ruleset:
     AgentComponent:
       - PlatformComponent
@@ -100,6 +104,9 @@ deptrac:
       - PlatformComponent
     PlatformComponent: ~
     StoreComponent:
+      - PlatformComponent
+    ChromaDbStore:
+      - StoreComponent
       - PlatformComponent
   # Baseline of known violations to be skipped for now
   skip_violations:
