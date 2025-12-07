@@ -37,8 +37,8 @@ Distance Strategies
 
 Both stores support different distance calculation strategies::
 
-    use Symfony\AI\Store\Bridge\Local\DistanceCalculator;
-    use Symfony\AI\Store\Bridge\Local\DistanceStrategy;
+    use Symfony\AI\Store\Distance\DistanceCalculator;
+    use Symfony\AI\Store\Distance\DistanceStrategy;
 
     $calculator = new DistanceCalculator(DistanceStrategy::COSINE_DISTANCE);
     $store = new InMemoryStore($calculator);
