@@ -26,5 +26,5 @@ interface ChatInterface
     /**
      * @throws ExceptionInterface When the chat submission fails due to agent errors
      */
-    public function submit(UserMessage $message): AssistantMessage;
+    public function submit(UserMessage $message, array $options = []): AssistantMessage;
 }

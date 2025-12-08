@@ -56,7 +56,7 @@ final class TraceableChat implements ChatInterface
         $this->chat->initiate($messages);
     }
 
-    public function submit(UserMessage $message): AssistantMessage
+    public function submit(UserMessage $message, array $options = []): AssistantMessage
     {
         $this->calls[] = [
             'action' => __FUNCTION__,
@@ -64,6 +64,6 @@ final class TraceableChat implements ChatInterface
             'saved_at' => $this->clock->now(),
         ];
 
-        return $this->chat->submit($message);
+        return $this->chat->submit($message, $options);
     }
 }

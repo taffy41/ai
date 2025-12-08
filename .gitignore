@@ -2,6 +2,6 @@
 .doctor-rst.cache
 .php-cs-fixer.cache
 .phpunit.cache
-
+.idea
 composer.lock
 vendor

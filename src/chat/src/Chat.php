@@ -35,12 +35,12 @@ final class Chat implements ChatInterface
         $this->store->save($messages);
     }
 
-    public function submit(UserMessage $message): AssistantMessage
+    public function submit(UserMessage $message, array $options = []): AssistantMessage
     {
         $messages = $this->store->load();
 
         $messages->add($message);
-        $result = $this->agent->call($messages);
+        $result = $this->agent->call($messages, $options);
 
         \assert($result instanceof TextResult);
 
