@@ -4,11 +4,13 @@ on:
     push:
         paths:
             - 'src/store/src/Bridge/**/composer.json'
+            - 'src/agent/src/Bridge/**/composer.json'
             - 'src/ai-bundle/config/options.php'
             - '.github/workflows/validation.yaml'
     pull_request:
         paths:
             - 'src/store/src/Bridge/**/composer.json'
+            - 'src/agent/src/Bridge/**/composer.json'
             - 'src/ai-bundle/config/options.php'
             - '.github/workflows/validation.yaml'
 
@@ -79,3 +81,52 @@ jobs:
 
                   echo ""
                   echo "All store bridge naming conventions are valid!"
+
+    validate_tools:
+        name: Validate Tool Bridge Naming
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v5
+
+            - name: Validate tool bridge naming conventions
+              run: |
+                  #!/bin/bash
+                  set -e
+
+                  ERRORS=0
+
+                  # Find all tool bridges with composer.json
+                  for composer_file in src/agent/src/Bridge/*/composer.json; do
+                      if [[ ! -f "$composer_file" ]]; then
+                          continue
+                      fi
+
+                      # Get the bridge directory name (e.g., OpenMeteo)
+                      bridge_dir=$(dirname "$composer_file")
+                      bridge_name=$(basename "$bridge_dir")
+
+                      # Get the package name from composer.json
+                      package_name=$(jq -r '.name' "$composer_file")
+
+                      # Expected package name format: symfony/ai-{lowercase-with-dashes}-tool
+                      # Convert PascalCase to kebab-case (e.g., OpenMeteo -> open-meteo)
+                      expected_kebab=$(echo "$bridge_name" | sed 's/\([a-z]\)\([A-Z]\)/\1-\2/g' | tr '[:upper:]' '[:lower:]')
+                      expected_package="symfony/ai-${expected_kebab}-tool"
+
+                      if [[ "$package_name" != "$expected_package" ]]; then
+                          echo "::error file=$composer_file::Package name '$package_name' does not match expected '$expected_package' for bridge '$bridge_name'"
+                          ERRORS=$((ERRORS + 1))
+                      else
+                          echo "✓ $bridge_name: package name '$package_name' is correct"
+                      fi
+                  done
+
+                  if [[ $ERRORS -gt 0 ]]; then
+                      echo ""
+                      echo "::error::Found $ERRORS naming convention violation(s)"
+                      exit 1
+                  fi
+
+                  echo ""
+                  echo "All tool bridge naming conventions are valid!"
