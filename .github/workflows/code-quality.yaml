@@ -51,12 +51,14 @@ jobs:
                   done
                   echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
 
-                  # Bridges (store and tool)
+                  # Bridges (store, tool, and platform)
                   STORE_BRIDGES=$(find src/store/src/Bridge/ -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort \
                       | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "store", type: "Store", bridge: .})')
                   TOOL_BRIDGES=$(find src/agent/src/Bridge/ -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort \
                       | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "agent", type: "Tool", bridge: .})')
-                  BRIDGES=$(jq -n -c --argjson store "$STORE_BRIDGES" --argjson tool "$TOOL_BRIDGES" '$store + $tool')
+                  PLATFORM_BRIDGES=$(find src/platform/src/Bridge/ -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort \
+                      | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "platform", type: "Platform", bridge: .})')
+                  BRIDGES=$(jq -n -c --argjson store "$STORE_BRIDGES" --argjson tool "$TOOL_BRIDGES" --argjson platform "$PLATFORM_BRIDGES" '$store + $tool + $platform')
                   echo "bridges=$BRIDGES" >> $GITHUB_OUTPUT
 
                   # Pretty print for info
@@ -171,6 +173,19 @@ jobs:
               with:
                   php-version: ${{ env.PHP_VERSION }}
                   extensions: ${{ env.REQUIRED_PHP_EXTENSIONS }}
+
+            - name: Install root dependencies (platform bridges only)
+              if: matrix.bridge.component == 'platform'
+              uses: ramsey/composer-install@v3
+
+            - name: Build root packages (platform bridges only)
+              if: matrix.bridge.component == 'platform'
+              run: php .github/build-packages.php
+
+            # Remove root vendor and bridge vendor to avoid circular symlinks when installing bridge dependencies
+            - name: Clean vendor folders (platform bridges only)
+              if: matrix.bridge.component == 'platform'
+              run: rm -rf vendor src/platform/src/Bridge/${{ matrix.bridge.bridge }}/vendor
 
             - name: Install dependencies
               uses: ramsey/composer-install@v3
