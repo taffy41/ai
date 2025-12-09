@@ -52,7 +52,6 @@
         "symfony/ai-scraper-tool": "@dev",
         "symfony/ai-serp-api-tool": "@dev",
         "symfony/ai-similarity-search-tool": "@dev",
-        "symfony/ai-store": "@dev",
         "symfony/ai-supabase-store": "@dev",
         "symfony/ai-surreal-db-store": "@dev",
         "symfony/ai-tavily-tool": "@dev",
