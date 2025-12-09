@@ -24,7 +24,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
 
             - name: Validate store bridge naming conventions
               run: .github/scripts/validate-bridge-naming.sh store "src/store/src/Bridge/*" src/ai-bundle/config/options.php
@@ -34,7 +34,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
 
             - name: Validate tool bridge naming conventions
               run: .github/scripts/validate-bridge-naming.sh tool "src/agent/src/Bridge/*"
