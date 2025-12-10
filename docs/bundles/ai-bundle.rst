@@ -1093,8 +1093,8 @@ Message stores are defined in the ``message_store`` section of your configuratio
     ai:
         # ...
         message_store:
-            youtube:
-                cache:
+            cache:
+                youtube:
                     service: 'cache.app'
                     key: 'youtube'
 
