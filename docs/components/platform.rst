@@ -137,6 +137,9 @@ Supported Models & Platforms
     * `ElevenLabs STT`_ with `ElevenLabs`_ as Platform
     * `Cartesia TTS`_ with `Cartesia`_ as Platform
     * `Cartesia STT`_ with `Cartesia`_ as Platform
+* **Image/Video Models**
+    * `Decart T2I`_ with `Decart`_  as Platform
+    * `Decart T2V`_ with `Decart`_  as Platform
 
 Generic Platforms
 ~~~~~~~~~~~~~~~~~
@@ -548,12 +551,15 @@ Code Examples
 .. _`Anthropic`: https://www.anthropic.com/
 .. _`AWS Bedrock`: https://aws.amazon.com/bedrock/
 .. _`LiteLLM`: https://docs.litellm.ai/docs/
-.. _`ElevenLabs`: https://elevenlabs.io/
-.. _`ElevenLabs STT`: https://elevenlabs.io/speech-to-text
-.. _`ElevenLabs TTS`: https://elevenlabs.io/text-to-speech
 .. _`Cartesia`: https://cartesia.ai/
 .. _`Cartesia STT`: https://cartesia.ai/ink
 .. _`Cartesia TTS`: https://cartesia.ai/sonic
+.. _`Decart`: https://decart.ai/
+.. _`Decart T2I`: https://platform.decart.ai/models/lucy-image
+.. _`Decart T2V`: https://platform.decart.ai/models/lucy
+.. _`ElevenLabs`: https://elevenlabs.io/
+.. _`ElevenLabs STT`: https://elevenlabs.io/speech-to-text
+.. _`ElevenLabs TTS`: https://elevenlabs.io/text-to-speech
 .. _`LiteLLM example`: https://github.com/symfony/ai/blob/main/examples/litellm/chat.php
 .. _`Meta's Llama`: https://www.llama.com/
 .. _`Ollama`: https://ollama.com/
