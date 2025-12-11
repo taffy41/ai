@@ -5,14 +5,18 @@ on:
         paths:
             - 'src/*/src/Bridge/**/composer.json'
             - 'src/ai-bundle/config/options.php'
+            - 'splitsh.json'
             - '.github/workflows/validation.yaml'
             - '.github/scripts/validate-bridge-naming.sh'
+            - '.github/scripts/validate-bridge-splitsh.sh'
     pull_request:
         paths:
             - 'src/*/src/Bridge/**/composer.json'
             - 'src/ai-bundle/config/options.php'
+            - 'splitsh.json'
             - '.github/workflows/validation.yaml'
             - '.github/scripts/validate-bridge-naming.sh'
+            - '.github/scripts/validate-bridge-splitsh.sh'
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -20,7 +24,7 @@ concurrency:
 
 jobs:
     validate_stores:
-        name: Store Bridge Naming
+        name: Store Bridges
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -29,8 +33,11 @@ jobs:
             - name: Validate store bridge naming conventions
               run: .github/scripts/validate-bridge-naming.sh store "src/store/src/Bridge/*" src/ai-bundle/config/options.php
 
+            - name: Validate store bridges are in splitsh.json
+              run: .github/scripts/validate-bridge-splitsh.sh store "src/store/src/Bridge/*"
+
     validate_tools:
-        name: Tool Bridge Naming
+        name: Tool Bridges
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -38,3 +45,6 @@ jobs:
 
             - name: Validate tool bridge naming conventions
               run: .github/scripts/validate-bridge-naming.sh tool "src/agent/src/Bridge/*"
+
+            - name: Validate tool bridges are in splitsh.json
+              run: .github/scripts/validate-bridge-splitsh.sh tool "src/agent/src/Bridge/*"
