@@ -2,20 +2,24 @@
 #
 # Validates that all bridge directories are configured in splitsh.json.
 #
-# Usage: validate-bridge-splitsh.sh <bridge_type> <bridge_path>
+# Usage: validate-bridge-splitsh.sh <bridge_type> [component]
 #
 # Arguments:
 #   bridge_type     Type of bridge (e.g., "store", "tool") - used in output messages
-#   bridge_path     Path pattern to bridge directories (e.g., "src/store/src/Bridge/*")
+#   component       Name of the parent component (e.g., agent, platform, store)
+#                   If not provided, defaults to bridge_type
 #
 # Example:
-#   validate-bridge-splitsh.sh store "src/store/src/Bridge/*"
-#   validate-bridge-splitsh.sh tool "src/agent/src/Bridge/*"
+#   validate-bridge-splitsh.sh store
+#   validate-bridge-splitsh.sh tool agent
+#
+# The script builds the bridge path internally as: src/${component}/src/Bridge/*
 
 set -e
 
 BRIDGE_TYPE="${1:?Bridge type is required (e.g., store, tool)}"
-BRIDGE_PATH="${2:?Bridge path pattern is required (e.g., src/store/src/Bridge/*)}"
+COMPONENT="${2:-$BRIDGE_TYPE}"
+BRIDGE_PATH="src/${COMPONENT}/src/Bridge/*"
 
 SPLITSH_FILE="splitsh.json"
 

@@ -31,10 +31,10 @@ jobs:
               uses: actions/checkout@v6
 
             - name: Validate store bridge naming conventions
-              run: .github/scripts/validate-bridge-naming.sh store "src/store/src/Bridge/*" src/ai-bundle/config/options.php
+              run: .github/scripts/validate-bridge-naming.sh store store src/ai-bundle/config/options.php
 
             - name: Validate store bridges are in splitsh.json
-              run: .github/scripts/validate-bridge-splitsh.sh store "src/store/src/Bridge/*"
+              run: .github/scripts/validate-bridge-splitsh.sh store
 
     validate_tools:
         name: Tool Bridges
@@ -44,7 +44,7 @@ jobs:
               uses: actions/checkout@v6
 
             - name: Validate tool bridge naming conventions
-              run: .github/scripts/validate-bridge-naming.sh tool "src/agent/src/Bridge/*"
+              run: .github/scripts/validate-bridge-naming.sh tool agent
 
             - name: Validate tool bridges are in splitsh.json
-              run: .github/scripts/validate-bridge-splitsh.sh tool "src/agent/src/Bridge/*"
+              run: .github/scripts/validate-bridge-splitsh.sh tool agent

@@ -2,21 +2,26 @@
 #
 # Validates bridge naming conventions for Symfony AI components.
 #
-# Usage: validate-bridge-naming.sh <bridge_type> <bridge_path> [options_file]
+# Usage: validate-bridge-naming.sh <bridge_type> [component] [options_file]
 #
 # Arguments:
 #   bridge_type     Type of bridge (e.g., "store", "tool") - used in output messages and package suffix
-#   bridge_path     Path pattern to bridge directories (e.g., "src/store/src/Bridge/*")
+#   component       Name of the parent component (e.g., agent, platform, store)
+#                   If not provided, defaults to bridge_type
 #   options_file    Optional: Path to options.php file for config key validation (only needed for stores)
 #
 # Example:
-#   validate-bridge-naming.sh store "src/store/src/Bridge/*" src/ai-bundle/config/options.php
-#   validate-bridge-naming.sh tool "src/agent/src/Bridge/*"
+#   validate-bridge-naming.sh store
+#   validate-bridge-naming.sh store store src/ai-bundle/config/options.php
+#   validate-bridge-naming.sh tool agent
+#
+# The script builds the bridge path internally as: src/${component}/src/Bridge/*
 
 set -e
 
 BRIDGE_TYPE="${1:?Bridge type is required (e.g., store, tool)}"
-BRIDGE_PATH="${2:?Bridge path pattern is required (e.g., src/store/src/Bridge/*)}"
+COMPONENT="${2:-$BRIDGE_TYPE}"
+BRIDGE_PATH="src/${COMPONENT}/src/Bridge/*"
 OPTIONS_FILE="${3:-}"
 
 ERRORS=0
