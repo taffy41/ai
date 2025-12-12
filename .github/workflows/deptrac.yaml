@@ -1,4 +1,4 @@
-name: deptrac
+name: Dependency Analysis
 
 on:
     push:
