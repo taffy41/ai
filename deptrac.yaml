@@ -96,7 +96,111 @@ deptrac:
     - name: PlatformComponent
       collectors:
         - type: classLike
-          value: Symfony\\AI\\Platform.*
+          value: ^Symfony\\AI\\Platform\\(?!Bridge\\).*
+    - name: PlatformAiMlApiBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\AiMlApi\\.*
+    - name: PlatformAlbertBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Albert\\.*
+    - name: PlatformAnthropicBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Anthropic\\.*
+    - name: PlatformAzureBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Azure\\.*
+    - name: PlatformBedrockBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Bedrock\\.*
+    - name: PlatformCartesiaBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Cartesia\\.*
+    - name: PlatformCerebrasBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Cerebras\\.*
+    - name: PlatformDecartBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Decart\\.*
+    - name: PlatformDeepSeekBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\DeepSeek\\.*
+    - name: PlatformDockerModelRunnerBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\DockerModelRunner\\.*
+    - name: PlatformElevenLabsBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\ElevenLabs\\.*
+    - name: PlatformGeminiBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Gemini\\.*
+    - name: PlatformGenericBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Generic\\.*
+    - name: PlatformHuggingFaceBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\HuggingFace\\.*
+    - name: PlatformLmStudioBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\LmStudio\\.*
+    - name: PlatformMetaBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Meta\\.*
+    - name: PlatformMistralBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Mistral\\.*
+    - name: PlatformOllamaBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Ollama\\.*
+    - name: PlatformOpenAiBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\OpenAi\\.*
+    - name: PlatformOpenRouterBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\OpenRouter\\.*
+    - name: PlatformPerplexityBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Perplexity\\.*
+    - name: PlatformReplicateBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Replicate\\.*
+    - name: PlatformScalewayBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Scaleway\\.*
+    - name: PlatformTransformersPhpBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\TransformersPhp\\.*
+    - name: PlatformVertexAiBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\VertexAi\\.*
+    - name: PlatformVoyageBridge
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\Voyage\\.*
     - name: StoreComponent
       collectors:
         - type: classLike
@@ -242,6 +346,69 @@ deptrac:
       - ChatComponent
       - PlatformComponent
     PlatformComponent: ~
+    PlatformAiMlApiBridge:
+      - PlatformComponent
+      - PlatformGenericBridge
+    PlatformAlbertBridge:
+      - PlatformComponent
+      - PlatformGenericBridge
+    PlatformAnthropicBridge:
+      - PlatformComponent
+    PlatformAzureBridge:
+      - PlatformComponent
+      - PlatformOpenAiBridge
+      - PlatformGenericBridge
+      - PlatformMetaBridge
+    PlatformBedrockBridge:
+      - PlatformComponent
+      - PlatformMetaBridge
+      - PlatformAnthropicBridge
+    PlatformCartesiaBridge:
+      - PlatformComponent
+    PlatformCerebrasBridge:
+      - PlatformComponent
+    PlatformDecartBridge:
+      - PlatformComponent
+    PlatformDeepSeekBridge:
+      - PlatformComponent
+    PlatformDockerModelRunnerBridge:
+      - PlatformComponent
+    PlatformElevenLabsBridge:
+      - PlatformComponent
+    PlatformGeminiBridge:
+      - PlatformComponent
+    PlatformGenericBridge:
+      - PlatformComponent
+    PlatformHuggingFaceBridge:
+      - PlatformComponent
+    PlatformLmStudioBridge:
+      - PlatformComponent
+      - PlatformGenericBridge
+    PlatformMetaBridge:
+      - PlatformComponent
+    PlatformMistralBridge:
+      - PlatformComponent
+    PlatformOllamaBridge:
+      - PlatformComponent
+    PlatformOpenAiBridge:
+      - PlatformComponent
+    PlatformOpenRouterBridge:
+      - PlatformComponent
+      - PlatformGenericBridge
+    PlatformPerplexityBridge:
+      - PlatformComponent
+    PlatformReplicateBridge:
+      - PlatformComponent
+      - PlatformMetaBridge
+    PlatformScalewayBridge:
+      - PlatformComponent
+    PlatformTransformersPhpBridge:
+      - PlatformComponent
+    PlatformVertexAiBridge:
+      - PlatformComponent
+      - PlatformGeminiBridge
+    PlatformVoyageBridge:
+      - PlatformComponent
     StoreComponent:
       - PlatformComponent
     AzureSearchStore:
