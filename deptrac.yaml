@@ -97,107 +97,107 @@ deptrac:
       collectors:
         - type: classLike
           value: ^Symfony\\AI\\Platform\\(?!Bridge\\).*
-    - name: PlatformAiMlApiBridge
+    - name: AiMlApiPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\AiMlApi\\.*
-    - name: PlatformAlbertBridge
+    - name: AlbertPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Albert\\.*
-    - name: PlatformAnthropicBridge
+    - name: AnthropicPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Anthropic\\.*
-    - name: PlatformAzureBridge
+    - name: AzurePlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Azure\\.*
-    - name: PlatformBedrockBridge
+    - name: BedrockPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Bedrock\\.*
-    - name: PlatformCartesiaBridge
+    - name: CartesiaPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Cartesia\\.*
-    - name: PlatformCerebrasBridge
+    - name: CerebrasPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Cerebras\\.*
-    - name: PlatformDecartBridge
+    - name: DecartPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Decart\\.*
-    - name: PlatformDeepSeekBridge
+    - name: DeepSeekPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\DeepSeek\\.*
-    - name: PlatformDockerModelRunnerBridge
+    - name: DockerModelRunnerPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\DockerModelRunner\\.*
-    - name: PlatformElevenLabsBridge
+    - name: ElevenLabsPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\ElevenLabs\\.*
-    - name: PlatformGeminiBridge
+    - name: GeminiPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Gemini\\.*
-    - name: PlatformGenericBridge
+    - name: GenericPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Generic\\.*
-    - name: PlatformHuggingFaceBridge
+    - name: HuggingFacePlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\HuggingFace\\.*
-    - name: PlatformLmStudioBridge
+    - name: LmStudioPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\LmStudio\\.*
-    - name: PlatformMetaBridge
+    - name: MetaPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Meta\\.*
-    - name: PlatformMistralBridge
+    - name: MistralPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Mistral\\.*
-    - name: PlatformOllamaBridge
+    - name: OllamaPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Ollama\\.*
-    - name: PlatformOpenAiBridge
+    - name: OpenAiPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\OpenAi\\.*
-    - name: PlatformOpenRouterBridge
+    - name: OpenRouterPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\OpenRouter\\.*
-    - name: PlatformPerplexityBridge
+    - name: PerplexityPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Perplexity\\.*
-    - name: PlatformReplicateBridge
+    - name: ReplicatePlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Replicate\\.*
-    - name: PlatformScalewayBridge
+    - name: ScalewayPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Scaleway\\.*
-    - name: PlatformTransformersPhpBridge
+    - name: TransformersPhpPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\TransformersPhp\\.*
-    - name: PlatformVertexAiBridge
+    - name: VertexAiPlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\VertexAi\\.*
-    - name: PlatformVoyageBridge
+    - name: VoyagePlatform
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Voyage\\.*
@@ -346,68 +346,68 @@ deptrac:
       - ChatComponent
       - PlatformComponent
     PlatformComponent: ~
-    PlatformAiMlApiBridge:
+    AiMlApiPlatform:
       - PlatformComponent
-      - PlatformGenericBridge
-    PlatformAlbertBridge:
+      - GenericPlatform
+    AlbertPlatform:
       - PlatformComponent
-      - PlatformGenericBridge
-    PlatformAnthropicBridge:
+      - GenericPlatform
+    AnthropicPlatform:
       - PlatformComponent
-    PlatformAzureBridge:
+    AzurePlatform:
       - PlatformComponent
-      - PlatformOpenAiBridge
-      - PlatformGenericBridge
-      - PlatformMetaBridge
-    PlatformBedrockBridge:
+      - OpenAiPlatform
+      - GenericPlatform
+      - MetaPlatform
+    BedrockPlatform:
       - PlatformComponent
-      - PlatformMetaBridge
-      - PlatformAnthropicBridge
-    PlatformCartesiaBridge:
+      - MetaPlatform
+      - AnthropicPlatform
+    CartesiaPlatform:
       - PlatformComponent
-    PlatformCerebrasBridge:
+    CerebrasPlatform:
       - PlatformComponent
-    PlatformDecartBridge:
+    DecartPlatform:
       - PlatformComponent
-    PlatformDeepSeekBridge:
+    DeepSeekPlatform:
       - PlatformComponent
-    PlatformDockerModelRunnerBridge:
+    DockerModelRunnerPlatform:
       - PlatformComponent
-    PlatformElevenLabsBridge:
+    ElevenLabsPlatform:
       - PlatformComponent
-    PlatformGeminiBridge:
+    GeminiPlatform:
       - PlatformComponent
-    PlatformGenericBridge:
+    GenericPlatform:
       - PlatformComponent
-    PlatformHuggingFaceBridge:
+    HuggingFacePlatform:
       - PlatformComponent
-    PlatformLmStudioBridge:
+    LmStudioPlatform:
       - PlatformComponent
-      - PlatformGenericBridge
-    PlatformMetaBridge:
+      - GenericPlatform
+    MetaPlatform:
       - PlatformComponent
-    PlatformMistralBridge:
+    MistralPlatform:
       - PlatformComponent
-    PlatformOllamaBridge:
+    OllamaPlatform:
       - PlatformComponent
-    PlatformOpenAiBridge:
+    OpenAiPlatform:
       - PlatformComponent
-    PlatformOpenRouterBridge:
+    OpenRouterPlatform:
       - PlatformComponent
-      - PlatformGenericBridge
-    PlatformPerplexityBridge:
+      - GenericPlatform
+    PerplexityPlatform:
       - PlatformComponent
-    PlatformReplicateBridge:
+    ReplicatePlatform:
       - PlatformComponent
-      - PlatformMetaBridge
-    PlatformScalewayBridge:
+      - MetaPlatform
+    ScalewayPlatform:
       - PlatformComponent
-    PlatformTransformersPhpBridge:
+    TransformersPhpPlatform:
       - PlatformComponent
-    PlatformVertexAiBridge:
+    VertexAiPlatform:
       - PlatformComponent
-      - PlatformGeminiBridge
-    PlatformVoyageBridge:
+      - GeminiPlatform
+    VoyagePlatform:
       - PlatformComponent
     StoreComponent:
       - PlatformComponent
