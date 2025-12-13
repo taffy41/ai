@@ -67,7 +67,6 @@ Advanced Example with Multiple Agents
         agent:
             rag:
                 platform: 'ai.platform.azure.gpt_deployment'
-                track_token_usage: true # Enable tracking of token usage for the agent, default is true
                 model: 'gpt-4o-mini'
                 memory: 'You have access to conversation history and user preferences' # Optional: static memory content
                 prompt: # The system prompt configuration
@@ -899,8 +898,8 @@ Token Usage Tracking
 Token usage tracking is a feature provided by some of the Platform's bridges, for monitoring and analyzing the
 consumption of tokens by your agents. This feature is particularly useful for understanding costs and performance.
 
-When enabled, the agent will automatically track token usage information and add it
-to the result metadata. The tracked information includes:
+In case a Platform bridge supports token usage tracking, the Platform will automatically track token usage information
+and add it to the result metadata. The tracked information includes:
 
 * **Prompt tokens**: Number of tokens used in the input/prompt
 * **Completion tokens**: Number of tokens generated in the response
@@ -931,19 +930,6 @@ The token usage information can be accessed from the result metadata::
             return $result->getMetadata()->get('token_usage');
         }
     }
-
-Disable Tracking
-~~~~~~~~~~~~~~~~
-
-To disable token usage tracking for an agent, set the ``track_token_usage`` option to ``false``:
-
-.. code-block:: yaml
-
-    ai:
-        agent:
-            my_agent:
-                model: 'gpt-4o-mini'
-                track_token_usage: false
 
 Vectorizers
 -----------
