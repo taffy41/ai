@@ -32,6 +32,8 @@
         "symfony/ai-store": "@dev"
     },
     "require-dev": {
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
         "phpunit/phpunit": "^11.5.46"
     },
     "minimum-stability": "dev",
@@ -42,7 +44,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Symfony\\AI\\Agent\\Bridge\\SimilaritySearch\\Tests\\": "Tests/"
+            "Symfony\\AI\\Agent\\Bridge\\SimilaritySearch\\Tests\\": "Tests/",
+            "Symfony\\AI\\PHPStan\\": "../../../../../.phpstan/"
         }
     },
     "config": {
