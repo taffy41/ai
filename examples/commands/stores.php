@@ -94,11 +94,11 @@ $factories = [
         vectorIndexName: 'Commands',
         nodeName: 'symfony',
     ),
-    'opensearch' => static fn (): OpenSearchStore => new OpenSearchStore(
-        http_client(),
-        env('OPENSEARCH_ENDPOINT'),
-        'symfony',
-    ),
+    // 'opensearch' => static fn (): OpenSearchStore => new OpenSearchStore(
+    //     http_client(),
+    //     env('OPENSEARCH_ENDPOINT'),
+    //     'symfony',
+    // ),
     'postgres' => static fn (): PostgresStore => PostgresStore::fromDbal(
         DriverManager::getConnection((new DsnParser())->parse(env('POSTGRES_URI'))),
         'my_table',
