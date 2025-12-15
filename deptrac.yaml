@@ -471,6 +471,3 @@ deptrac:
     WeaviateStore:
       - StoreComponent
       - PlatformComponent
-  # Baseline of known violations to be skipped for now
-  skip_violations:
-    Symfony\AI\Platform\Bridge\Perplexity\SearchResultProcessor: [Symfony\AI\Agent\OutputProcessorInterface, Symfony\AI\Agent\Output]

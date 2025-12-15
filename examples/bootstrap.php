@@ -146,11 +146,11 @@ function perplexity_print_search_results(Metadata $metadata): void
 
     foreach ($searchResults as $i => $searchResult) {
         echo 'Result #'.($i + 1).':'.\PHP_EOL;
-        echo $searchResult['title'].\PHP_EOL;
-        echo $searchResult['url'].\PHP_EOL;
-        echo $searchResult['date'].\PHP_EOL;
-        echo $searchResult['last_updated'] ? $searchResult['last_updated'].\PHP_EOL : '';
-        echo $searchResult['snippet'] ? $searchResult['snippet'].\PHP_EOL : '';
+        echo isset($searchResult['title']) ? ' Title: '.$searchResult['title'].\PHP_EOL : '';
+        echo isset($searchResult['url']) ? ' URL: '.$searchResult['url'].\PHP_EOL : '';
+        echo isset($searchResult['date']) ? ' Date: '.$searchResult['date'].\PHP_EOL : '';
+        echo isset($searchResult['last_updated']) ? ' Last Updated: '.$searchResult['last_updated'].\PHP_EOL : '';
+        echo isset($searchResult['snippet']) ? ' Snippet: '.$searchResult['snippet'].\PHP_EOL : '';
         echo \PHP_EOL;
     }
 }
@@ -173,7 +173,7 @@ function perplexity_print_citations(Metadata $metadata): void
 
     foreach ($citations as $i => $citation) {
         echo 'Citation #'.($i + 1).':'.\PHP_EOL;
-        echo $citation.\PHP_EOL;
+        echo ' '.$citation.\PHP_EOL;
         echo \PHP_EOL;
     }
 }
