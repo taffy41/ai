@@ -5,6 +5,10 @@ deptrac:
     - '#.*test.*#i'
     - '#.*vendor.*#'
   layers:
+    - name: Fixtures
+      collectors:
+        - type: classLike
+          value: ^Symfony\\AI\\Fixtures\\.*
     - name: AgentComponent
       collectors:
         - type: classLike
@@ -286,6 +290,7 @@ deptrac:
         - type: classLike
           value: Symfony\\AI\\Store\\Bridge\\Weaviate\\.*
   ruleset:
+    Fixtures: ~
     AgentComponent:
       - PlatformComponent
       - StoreComponent
