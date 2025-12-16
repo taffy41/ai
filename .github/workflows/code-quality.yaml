@@ -14,6 +14,9 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
     cancel-in-progress: true
 
+env:
+    REQUIRED_PHP_EXTENSIONS: 'mongodb, redis'
+
 jobs:
     phpstan:
         name: PHPStan
@@ -29,7 +32,7 @@ jobs:
             - name: Configure environment
               run: |
                   echo COLUMNS=120 >> $GITHUB_ENV
-                  echo COMPOSER_UP='composer update --no-progress --no-interaction --no-scripts --ansi --ignore-platform-req=ext-mongodb' >> $GITHUB_ENV
+                  echo COMPOSER_UP='composer update --no-progress --no-interaction --no-scripts --ansi' >> $GITHUB_ENV
                   echo PHPSTAN='vendor/bin/phpstan' >> $GITHUB_ENV
 
                   PACKAGES=$(find src/ -mindepth 2 -type f -name composer.json -not -path "*/vendor/*" -not -path "*/Bridge/*" -printf '%h\n' | sed 's/^src\///' | grep -Ev "examples" | sort |  tr '\n' ' ')
@@ -40,6 +43,7 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php-version }}
+                  extensions: "${{ env.REQUIRED_PHP_EXTENSIONS }}"
 
             - name: Get composer cache directory
               id: composer-cache
