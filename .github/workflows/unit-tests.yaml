@@ -18,74 +18,187 @@ env:
     REQUIRED_PHP_EXTENSIONS: 'mongodb, redis'
 
 jobs:
-    php:
+    matrix:
+        name: Matrix
+        runs-on: ubuntu-latest
+        outputs:
+            packages: ${{ steps.set-matrix.outputs.packages }}
+            bridges: ${{ steps.set-matrix.outputs.bridges }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Set matrix
+              id: set-matrix
+              run: |
+                  # Helper function to convert "ai-bundle" to "AI Bundle"
+                  to_title() {
+                      echo "$1" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)}1' \
+                          | sed 's/\bAi\b/AI/g; s/\bMcp\b/MCP/g'
+                  }
+
+                  # Packages (components and bundles)
+                  PACKAGES="[]"
+                  for pkg in $(find src/ -mindepth 2 -type f -name composer.json -not -path "*/vendor/*" -not -path "*/Bridge/*" | xargs -I{} dirname {} | sed 's|^src/||' | grep -Ev "examples" | sort); do
+                      if [[ "$pkg" == *-bundle ]]; then
+                          type="Bundle"
+                      else
+                          type="Component"
+                      fi
+                      name=$(to_title "$pkg")
+                      PACKAGES=$(echo "$PACKAGES" | jq -c --arg path "$pkg" --arg type "$type" --arg name "$name" '. + [{path: $path, type: $type, name: $name}]')
+                  done
+                  echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
+
+                  # Bridges (store and tool)
+                  STORE_BRIDGES=$(ls -1 src/store/src/Bridge/ | sort \
+                      | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "store", type: "Store", bridge: .})')
+                  TOOL_BRIDGES=$(ls -1 src/agent/src/Bridge/ | sort \
+                      | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "agent", type: "Tool", bridge: .})')
+                  BRIDGES=$(jq -n -c --argjson store "$STORE_BRIDGES" --argjson tool "$TOOL_BRIDGES" '$store + $tool')
+                  echo "bridges=$BRIDGES" >> $GITHUB_OUTPUT
+
+                  # Pretty print for info
+                  echo "### Packages"
+                  echo "$PACKAGES" | jq .
+                  echo ""
+                  echo "### Bridges"
+                  echo "$BRIDGES" | jq .
+
+    package:
+        name: ${{ matrix.package.type }} / ${{ matrix.package.name }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}${{ matrix.symfony-version && format(' / Symfony {0}', matrix.symfony-version) || '' }}
+        needs: matrix
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             matrix:
+                package: ${{ fromJson(needs.matrix.outputs.packages) }}
                 php-version: ['8.2', '8.5']
                 dependency-version: ['']
                 symfony-version: ['']
                 include:
-                    # lowest deps
-                    -   php-version: '8.2'
-                        dependency-version: 'lowest'
-                    # Symfony 7.4 LTS
-                    -   php-version: '8.2'
-                        symfony-version: '7.4.*'
-                    # Symfony 8.0
-                    -   php-version: '8.5'
-                        symfony-version: '8.0.*'
+                    # lowest deps for all packages
+                    - php-version: '8.2'
+                      dependency-version: 'lowest'
+                      package: { path: 'agent', type: 'Component', name: 'Agent' }
+                    - php-version: '8.2'
+                      dependency-version: 'lowest'
+                      package: { path: 'ai-bundle', type: 'Bundle', name: 'AI Bundle' }
+                    - php-version: '8.2'
+                      dependency-version: 'lowest'
+                      package: { path: 'chat', type: 'Component', name: 'Chat' }
+                    - php-version: '8.2'
+                      dependency-version: 'lowest'
+                      package: { path: 'mcp-bundle', type: 'Bundle', name: 'MCP Bundle' }
+                    - php-version: '8.2'
+                      dependency-version: 'lowest'
+                      package: { path: 'platform', type: 'Component', name: 'Platform' }
+                    - php-version: '8.2'
+                      dependency-version: 'lowest'
+                      package: { path: 'store', type: 'Component', name: 'Store' }
+                    # Symfony 7.4 LTS for all packages
+                    - php-version: '8.2'
+                      symfony-version: '7.4.*'
+                      package: { path: 'agent', type: 'Component', name: 'Agent' }
+                    - php-version: '8.2'
+                      symfony-version: '7.4.*'
+                      package: { path: 'ai-bundle', type: 'Bundle', name: 'AI Bundle' }
+                    - php-version: '8.2'
+                      symfony-version: '7.4.*'
+                      package: { path: 'chat', type: 'Component', name: 'Chat' }
+                    - php-version: '8.2'
+                      symfony-version: '7.4.*'
+                      package: { path: 'mcp-bundle', type: 'Bundle', name: 'MCP Bundle' }
+                    - php-version: '8.2'
+                      symfony-version: '7.4.*'
+                      package: { path: 'platform', type: 'Component', name: 'Platform' }
+                    - php-version: '8.2'
+                      symfony-version: '7.4.*'
+                      package: { path: 'store', type: 'Component', name: 'Store' }
+                    # Symfony 8.0 for all packages
+                    - php-version: '8.5'
+                      symfony-version: '8.0.*'
+                      package: { path: 'agent', type: 'Component', name: 'Agent' }
+                    - php-version: '8.5'
+                      symfony-version: '8.0.*'
+                      package: { path: 'ai-bundle', type: 'Bundle', name: 'AI Bundle' }
+                    - php-version: '8.5'
+                      symfony-version: '8.0.*'
+                      package: { path: 'chat', type: 'Component', name: 'Chat' }
+                    - php-version: '8.5'
+                      symfony-version: '8.0.*'
+                      package: { path: 'mcp-bundle', type: 'Bundle', name: 'MCP Bundle' }
+                    - php-version: '8.5'
+                      symfony-version: '8.0.*'
+                      package: { path: 'platform', type: 'Component', name: 'Platform' }
+                    - php-version: '8.5'
+                      symfony-version: '8.0.*'
+                      package: { path: 'store', type: 'Component', name: 'Store' }
 
         env:
             SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=7.4' }}
 
         steps:
-            - uses: actions/checkout@v6
+            - name: Checkout
+              uses: actions/checkout@v6
 
             - name: Configure environment
               run: |
                   echo COLUMNS=120 >> $GITHUB_ENV
-                  echo COMPOSER_UP='composer update ${{ matrix.dependency-version == 'lowest' && '--prefer-lowest --prefer-stable' || '' }} --no-progress --no-interaction --ansi' >> $GITHUB_ENV
-                  echo PHPUNIT='vendor/bin/phpunit' >> $GITHUB_ENV
-                  [ 'lowest' = '${{ matrix.dependency-version }}' ] && export SYMFONY_DEPRECATIONS_HELPER=weak
-
-                  PACKAGES=$(find src/ -mindepth 2 -type f -name composer.json -not -path "*/vendor/*" -printf '%h\n' | sed 's/^src\///' | grep -Ev "examples" | sort |  tr '\n' ' ')
-                  echo "Packages: $PACKAGES"
-                  echo "PACKAGES=$PACKAGES" >> $GITHUB_ENV
+                  [ 'lowest' = '${{ matrix.dependency-version }}' ] && echo SYMFONY_DEPRECATIONS_HELPER=weak >> $GITHUB_ENV || true
 
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php-version }}
                   tools: flex
-                  extensions: "${{ env.REQUIRED_PHP_EXTENSIONS }}"
+                  extensions: ${{ env.REQUIRED_PHP_EXTENSIONS }}
 
-            - name: Get composer cache directory
-              id: composer-cache
-              run: |
-                  echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-            - name: Cache packages dependencies
-              uses: actions/cache@v4
-              with:
-                  path: ${{ steps.composer-cache.outputs.dir }}
-                  key: ${{ runner.os }}-composer-packages-${{ matrix.php-version }}-${{ matrix.dependency-version }}-${{ matrix.symfony-version }}-${{ hashFiles('src/**/composer.json') }}
-                  restore-keys: |
-                      ${{ runner.os }}-composer-packages-${{ matrix.php-version }}-${{ matrix.dependency-version }}-${{ matrix.symfony-version }}
-
-            - name: Remove deptrac/deptrac for Symfony 8
-              if: matrix.symfony-version == '8.0.*'
-              run: composer remove deptrac/deptrac --dev --no-update
-
-            - name: Install root dependencies
+            - name: Install dependencies
               uses: ramsey/composer-install@v3
+              with:
+                  working-directory: src/${{ matrix.package.path }}
+                  dependency-versions: ${{ matrix.dependency-version || 'highest' }}
 
-            - name: Build root packages
-              run: php .github/build-packages.php
+            - name: Run PHPUnit
+              run: cd src/${{ matrix.package.path }} && vendor/bin/phpunit
 
-            - name: Run packages tests
+    bridge:
+        name: ${{ matrix.bridge.type }} / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}${{ matrix.symfony-version && format(' / Symfony {0}', matrix.symfony-version) || '' }}
+        needs: matrix
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                bridge: ${{ fromJson(needs.matrix.outputs.bridges) }}
+                php-version: ['8.2', '8.5']
+                dependency-version: ['']
+                symfony-version: ['']
+
+        env:
+            SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=7.4' }}
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Configure environment
               run: |
-                  source .github/workflows/.utils.sh
+                  echo COLUMNS=120 >> $GITHUB_ENV
+                  [ 'lowest' = '${{ matrix.dependency-version }}' ] && echo SYMFONY_DEPRECATIONS_HELPER=weak >> $GITHUB_ENV || true
 
-                  echo "$PACKAGES" | xargs -n1 | parallel -j +3 "_run_task {} '(cd src/{} && $COMPOSER_UP && $PHPUNIT)'"
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  tools: flex
+                  extensions: ${{ env.REQUIRED_PHP_EXTENSIONS }}
+
+            - name: Install dependencies
+              uses: ramsey/composer-install@v3
+              with:
+                  working-directory: src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }}
+                  dependency-versions: ${{ matrix.dependency-version || 'highest' }}
+
+            - name: Run PHPUnit
+              run: cd src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }} && vendor/bin/phpunit
