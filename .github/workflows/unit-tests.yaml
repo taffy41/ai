@@ -23,7 +23,9 @@ jobs:
         runs-on: ubuntu-latest
         outputs:
             packages: ${{ steps.set-matrix.outputs.packages }}
+            packages-include: ${{ steps.set-matrix.outputs.packages-include }}
             bridges: ${{ steps.set-matrix.outputs.bridges }}
+            bridges-include: ${{ steps.set-matrix.outputs.bridges-include }}
         steps:
             - name: Checkout
               uses: actions/checkout@v6
@@ -50,6 +52,19 @@ jobs:
                   done
                   echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
 
+                  # Generate package includes (lowest, Symfony 7.4, Symfony 8.0)
+                  PACKAGES_INCLUDE=$(echo "$PACKAGES" | jq -c '
+                      . as $pkgs |
+                      # lowest deps with PHP 8.2
+                      ($pkgs | map(. + {"php-version": "8.2", "dependency-version": "lowest"})) +
+                      # Symfony 7.4 LTS with PHP 8.2
+                      ($pkgs | map(. + {"php-version": "8.2", "symfony-version": "7.4.*"})) +
+                      # Symfony 8.0 with PHP 8.5
+                      ($pkgs | map(. + {"php-version": "8.5", "symfony-version": "8.0.*"}))
+                      | map({package: {path: .path, type: .type, name: .name}} + (. | del(.path, .type, .name)))
+                  ')
+                  echo "packages-include=$PACKAGES_INCLUDE" >> $GITHUB_OUTPUT
+
                   # Bridges (store and tool)
                   STORE_BRIDGES=$(ls -1 src/store/src/Bridge/ | sort \
                       | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "store", type: "Store", bridge: .})')
@@ -57,6 +72,19 @@ jobs:
                       | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "agent", type: "Tool", bridge: .})')
                   BRIDGES=$(jq -n -c --argjson store "$STORE_BRIDGES" --argjson tool "$TOOL_BRIDGES" '$store + $tool')
                   echo "bridges=$BRIDGES" >> $GITHUB_OUTPUT
+
+                  # Generate bridge includes (lowest, Symfony 7.4, Symfony 8.0)
+                  BRIDGES_INCLUDE=$(echo "$BRIDGES" | jq -c '
+                      . as $bridges |
+                      # lowest deps with PHP 8.2
+                      ($bridges | map(. + {"php-version": "8.2", "dependency-version": "lowest"})) +
+                      # Symfony 7.4 LTS with PHP 8.2
+                      ($bridges | map(. + {"php-version": "8.2", "symfony-version": "7.4.*"})) +
+                      # Symfony 8.0 with PHP 8.5
+                      ($bridges | map(. + {"php-version": "8.5", "symfony-version": "8.0.*"}))
+                      | map({bridge: {component: .component, type: .type, bridge: .bridge}} + (. | del(.component, .type, .bridge)))
+                  ')
+                  echo "bridges-include=$BRIDGES_INCLUDE" >> $GITHUB_OUTPUT
 
                   # Pretty print for info
                   echo "### Packages"
@@ -76,64 +104,7 @@ jobs:
                 php-version: ['8.2', '8.5']
                 dependency-version: ['']
                 symfony-version: ['']
-                include:
-                    # lowest deps for all packages
-                    - php-version: '8.2'
-                      dependency-version: 'lowest'
-                      package: { path: 'agent', type: 'Component', name: 'Agent' }
-                    - php-version: '8.2'
-                      dependency-version: 'lowest'
-                      package: { path: 'ai-bundle', type: 'Bundle', name: 'AI Bundle' }
-                    - php-version: '8.2'
-                      dependency-version: 'lowest'
-                      package: { path: 'chat', type: 'Component', name: 'Chat' }
-                    - php-version: '8.2'
-                      dependency-version: 'lowest'
-                      package: { path: 'mcp-bundle', type: 'Bundle', name: 'MCP Bundle' }
-                    - php-version: '8.2'
-                      dependency-version: 'lowest'
-                      package: { path: 'platform', type: 'Component', name: 'Platform' }
-                    - php-version: '8.2'
-                      dependency-version: 'lowest'
-                      package: { path: 'store', type: 'Component', name: 'Store' }
-                    # Symfony 7.4 LTS for all packages
-                    - php-version: '8.2'
-                      symfony-version: '7.4.*'
-                      package: { path: 'agent', type: 'Component', name: 'Agent' }
-                    - php-version: '8.2'
-                      symfony-version: '7.4.*'
-                      package: { path: 'ai-bundle', type: 'Bundle', name: 'AI Bundle' }
-                    - php-version: '8.2'
-                      symfony-version: '7.4.*'
-                      package: { path: 'chat', type: 'Component', name: 'Chat' }
-                    - php-version: '8.2'
-                      symfony-version: '7.4.*'
-                      package: { path: 'mcp-bundle', type: 'Bundle', name: 'MCP Bundle' }
-                    - php-version: '8.2'
-                      symfony-version: '7.4.*'
-                      package: { path: 'platform', type: 'Component', name: 'Platform' }
-                    - php-version: '8.2'
-                      symfony-version: '7.4.*'
-                      package: { path: 'store', type: 'Component', name: 'Store' }
-                    # Symfony 8.0 for all packages
-                    - php-version: '8.5'
-                      symfony-version: '8.0.*'
-                      package: { path: 'agent', type: 'Component', name: 'Agent' }
-                    - php-version: '8.5'
-                      symfony-version: '8.0.*'
-                      package: { path: 'ai-bundle', type: 'Bundle', name: 'AI Bundle' }
-                    - php-version: '8.5'
-                      symfony-version: '8.0.*'
-                      package: { path: 'chat', type: 'Component', name: 'Chat' }
-                    - php-version: '8.5'
-                      symfony-version: '8.0.*'
-                      package: { path: 'mcp-bundle', type: 'Bundle', name: 'MCP Bundle' }
-                    - php-version: '8.5'
-                      symfony-version: '8.0.*'
-                      package: { path: 'platform', type: 'Component', name: 'Platform' }
-                    - php-version: '8.5'
-                      symfony-version: '8.0.*'
-                      package: { path: 'store', type: 'Component', name: 'Store' }
+                include: ${{ fromJson(needs.matrix.outputs.packages-include) }}
 
         env:
             SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=7.4' }}
@@ -174,6 +145,7 @@ jobs:
                 php-version: ['8.2', '8.5']
                 dependency-version: ['']
                 symfony-version: ['']
+                include: ${{ fromJson(needs.matrix.outputs.bridges-include) }}
 
         env:
             SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=7.4' }}
