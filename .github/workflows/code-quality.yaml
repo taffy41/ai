@@ -148,6 +148,12 @@ jobs:
                   php-version: ${{ env.PHP_VERSION }}
                   extensions: ${{ env.REQUIRED_PHP_EXTENSIONS }}
 
+            - name: Install root dependencies
+              uses: ramsey/composer-install@v3
+
+            - name: Build root packages
+              run: php .github/build-packages.php
+
             - name: Install dependencies
               uses: ramsey/composer-install@v3
               with:
@@ -174,18 +180,15 @@ jobs:
                   php-version: ${{ env.PHP_VERSION }}
                   extensions: ${{ env.REQUIRED_PHP_EXTENSIONS }}
 
-            - name: Install root dependencies (platform bridges only)
-              if: matrix.bridge.component == 'platform'
+            - name: Install root dependencies
               uses: ramsey/composer-install@v3
 
-            - name: Build root packages (platform bridges only)
-              if: matrix.bridge.component == 'platform'
+            - name: Build root packages
               run: php .github/build-packages.php
 
             # Remove root vendor and bridge vendor to avoid circular symlinks when installing bridge dependencies
-            - name: Clean vendor folders (platform bridges only)
-              if: matrix.bridge.component == 'platform'
-              run: rm -rf vendor src/platform/src/Bridge/${{ matrix.bridge.bridge }}/vendor
+            - name: Clean vendor folders
+              run: rm -rf vendor src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }}/vendor
 
             - name: Install dependencies
               uses: ramsey/composer-install@v3
