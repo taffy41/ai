@@ -16,7 +16,18 @@
         "ai-youtube-tool": "src/agent/src/Bridge/Youtube",
         "ai-wikipedia-tool": "src/agent/src/Bridge/Wikipedia",
         "ai-bundle": "src/ai-bundle",
-        "ai-chat": "src/chat",
+        "ai-chat": {
+            "prefixes": [{ "from": "src/chat", "to": "", "excludes": ["src/Bridge"] }]
+        },
+        "ai-cache-message-store": "src/chat/src/Bridge/Cache",
+        "ai-cloudflare-message-store": "src/chat/src/Bridge/Cloudflare",
+        "ai-doctrine-message-store": "src/chat/src/Bridge/Doctrine",
+        "ai-session-message-store": "src/chat/src/Bridge/Session",
+        "ai-meilisearch-message-store": "src/chat/src/Bridge/Meilisearch",
+        "ai-mongo-db-message-store": "src/chat/src/Bridge/MongoDb",
+        "ai-pogocache-message-store": "src/chat/src/Bridge/Pogocache",
+        "ai-redis-message-store": "src/chat/src/Bridge/Redis",
+        "ai-surreal-db-message-store": "src/chat/src/Bridge/SurrealDb",
         "mcp-bundle": "src/mcp-bundle",
         "ai-platform": {
             "prefixes": [{ "from": "src/platform", "to": "", "excludes": ["src/Bridge"] }]

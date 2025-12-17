@@ -103,6 +103,40 @@ jobs:
             - name: Run PHPUnit
               run: cd src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }} && vendor/bin/phpunit
 
+    message-store-bridges:
+        name: Unit / Message Store / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}
+        needs: matrix
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                include: ${{ fromJson(needs.matrix.outputs.message-store-bridges-include) }}
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Configure environment
+              run: |
+                  echo COLUMNS=120 >> $GITHUB_ENV
+                  [ 'lowest' = '${{ matrix.dependency-version }}' ] && echo SYMFONY_DEPRECATIONS_HELPER=weak >> $GITHUB_ENV || true
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  tools: flex
+                  extensions: ${{ env.REQUIRED_PHP_EXTENSIONS }}
+
+            - name: Install dependencies
+              uses: ramsey/composer-install@v3
+              with:
+                  working-directory: src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }}
+                  dependency-versions: ${{ matrix.dependency-version }}
+
+            - name: Run PHPUnit
+              run: cd src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }} && vendor/bin/phpunit
+
     tool-bridges:
         name: Unit / Tool / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}
         needs: matrix
