@@ -24,8 +24,10 @@ jobs:
         outputs:
             packages: ${{ steps.set-matrix.outputs.packages }}
             packages-include: ${{ steps.set-matrix.outputs.packages-include }}
-            bridges: ${{ steps.set-matrix.outputs.bridges }}
-            bridges-include: ${{ steps.set-matrix.outputs.bridges-include }}
+            store-bridges: ${{ steps.set-matrix.outputs.store-bridges }}
+            store-bridges-include: ${{ steps.set-matrix.outputs.store-bridges-include }}
+            tool-bridges: ${{ steps.set-matrix.outputs.tool-bridges }}
+            tool-bridges-include: ${{ steps.set-matrix.outputs.tool-bridges-include }}
         steps:
             - name: Checkout
               uses: actions/checkout@v6
@@ -65,16 +67,13 @@ jobs:
                   ')
                   echo "packages-include=$PACKAGES_INCLUDE" >> $GITHUB_OUTPUT
 
-                  # Bridges (store and tool)
+                  # Store Bridges
                   STORE_BRIDGES=$(ls -1 src/store/src/Bridge/ | sort \
-                      | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "store", type: "Store", bridge: .})')
-                  TOOL_BRIDGES=$(ls -1 src/agent/src/Bridge/ | sort \
-                      | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "agent", type: "Tool", bridge: .})')
-                  BRIDGES=$(jq -n -c --argjson store "$STORE_BRIDGES" --argjson tool "$TOOL_BRIDGES" '$store + $tool')
-                  echo "bridges=$BRIDGES" >> $GITHUB_OUTPUT
+                      | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "store", bridge: .})')
+                  echo "store-bridges=$STORE_BRIDGES" >> $GITHUB_OUTPUT
 
-                  # Generate bridge includes (lowest, Symfony 7.4, Symfony 8.0)
-                  BRIDGES_INCLUDE=$(echo "$BRIDGES" | jq -c '
+                  # Generate store bridge includes (lowest, Symfony 7.4, Symfony 8.0)
+                  STORE_BRIDGES_INCLUDE=$(echo "$STORE_BRIDGES" | jq -c '
                       . as $bridges |
                       # lowest deps with PHP 8.2
                       ($bridges | map(. + {"php-version": "8.2", "dependency-version": "lowest"})) +
@@ -82,16 +81,38 @@ jobs:
                       ($bridges | map(. + {"php-version": "8.2", "symfony-version": "7.4.*"})) +
                       # Symfony 8.0 with PHP 8.5
                       ($bridges | map(. + {"php-version": "8.5", "symfony-version": "8.0.*"}))
-                      | map({bridge: {component: .component, type: .type, bridge: .bridge}} + (. | del(.component, .type, .bridge)))
+                      | map({bridge: {component: .component, bridge: .bridge}} + (. | del(.component, .bridge)))
                   ')
-                  echo "bridges-include=$BRIDGES_INCLUDE" >> $GITHUB_OUTPUT
+                  echo "store-bridges-include=$STORE_BRIDGES_INCLUDE" >> $GITHUB_OUTPUT
+
+                  # Tool Bridges
+                  TOOL_BRIDGES=$(ls -1 src/agent/src/Bridge/ | sort \
+                      | jq -R -s -c 'split("\n") | map(select(length > 0)) | map({component: "agent", bridge: .})')
+                  echo "tool-bridges=$TOOL_BRIDGES" >> $GITHUB_OUTPUT
+
+                  # Generate tool bridge includes (lowest, Symfony 7.4, Symfony 8.0)
+                  TOOL_BRIDGES_INCLUDE=$(echo "$TOOL_BRIDGES" | jq -c '
+                      . as $bridges |
+                      # lowest deps with PHP 8.2
+                      ($bridges | map(. + {"php-version": "8.2", "dependency-version": "lowest"})) +
+                      # Symfony 7.4 LTS with PHP 8.2
+                      ($bridges | map(. + {"php-version": "8.2", "symfony-version": "7.4.*"})) +
+                      # Symfony 8.0 with PHP 8.5
+                      ($bridges | map(. + {"php-version": "8.5", "symfony-version": "8.0.*"}))
+                      | map({bridge: {component: .component, bridge: .bridge}} + (. | del(.component, .bridge)))
+                  ')
+                  echo "tool-bridges-include=$TOOL_BRIDGES_INCLUDE" >> $GITHUB_OUTPUT
 
                   # Pretty print for info
-                  echo "### Packages"
+                  echo "::group::Packages"
                   echo "$PACKAGES" | jq .
-                  echo ""
-                  echo "### Bridges"
-                  echo "$BRIDGES" | jq .
+                  echo "::endgroup::"
+                  echo "::group::Store Bridges"
+                  echo "$STORE_BRIDGES" | jq .
+                  echo "::endgroup::"
+                  echo "::group::Tool Bridges"
+                  echo "$TOOL_BRIDGES" | jq .
+                  echo "::endgroup::"
 
     package:
         name: ${{ matrix.package.type }} / ${{ matrix.package.name }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}${{ matrix.symfony-version && format(' / Symfony {0}', matrix.symfony-version) || '' }}
@@ -134,18 +155,59 @@ jobs:
             - name: Run PHPUnit
               run: cd src/${{ matrix.package.path }} && vendor/bin/phpunit
 
-    bridge:
-        name: ${{ matrix.bridge.type }} / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}${{ matrix.symfony-version && format(' / Symfony {0}', matrix.symfony-version) || '' }}
+    store-bridge:
+        name: Store / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}${{ matrix.symfony-version && format(' / Symfony {0}', matrix.symfony-version) || '' }}
         needs: matrix
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             matrix:
-                bridge: ${{ fromJson(needs.matrix.outputs.bridges) }}
+                bridge: ${{ fromJson(needs.matrix.outputs.store-bridges) }}
                 php-version: ['8.2', '8.5']
                 dependency-version: ['']
                 symfony-version: ['']
-                include: ${{ fromJson(needs.matrix.outputs.bridges-include) }}
+                include: ${{ fromJson(needs.matrix.outputs.store-bridges-include) }}
+
+        env:
+            SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=7.4' }}
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Configure environment
+              run: |
+                  echo COLUMNS=120 >> $GITHUB_ENV
+                  [ 'lowest' = '${{ matrix.dependency-version }}' ] && echo SYMFONY_DEPRECATIONS_HELPER=weak >> $GITHUB_ENV || true
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  tools: flex
+                  extensions: ${{ env.REQUIRED_PHP_EXTENSIONS }}
+
+            - name: Install dependencies
+              uses: ramsey/composer-install@v3
+              with:
+                  working-directory: src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }}
+                  dependency-versions: ${{ matrix.dependency-version || 'highest' }}
+
+            - name: Run PHPUnit
+              run: cd src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }} && vendor/bin/phpunit
+
+    tool-bridge:
+        name: Tool / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}${{ matrix.symfony-version && format(' / Symfony {0}', matrix.symfony-version) || '' }}
+        needs: matrix
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                bridge: ${{ fromJson(needs.matrix.outputs.tool-bridges) }}
+                php-version: ['8.2', '8.5']
+                dependency-version: ['']
+                symfony-version: ['']
+                include: ${{ fromJson(needs.matrix.outputs.tool-bridges-include) }}
 
         env:
             SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=7.4' }}
