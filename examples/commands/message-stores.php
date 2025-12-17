@@ -15,7 +15,7 @@ use Doctrine\DBAL\DriverManager;
 use MongoDB\Client as MongoDbClient;
 use Symfony\AI\Chat\Bridge\Cache\Store as CacheStore;
 use Symfony\AI\Chat\Bridge\Doctrine\DoctrineDbalMessageStore;
-use Symfony\AI\Chat\Bridge\HttpFoundation\SessionStore;
+use Symfony\AI\Chat\Bridge\HttpFoundation\MessageStore as SessionMessageStore;
 use Symfony\AI\Chat\Bridge\Meilisearch\MessageStore as MeilisearchMessageStore;
 use Symfony\AI\Chat\Bridge\MongoDb\MessageStore as MongoDbMessageStore;
 use Symfony\AI\Chat\Bridge\Pogocache\MessageStore as PogocacheMessageStore;
@@ -73,14 +73,14 @@ $factories = [
     ], [
         new JsonEncoder(),
     ])),
-    'session' => static function (): SessionStore {
+    'session' => static function (): SessionMessageStore {
         $request = Request::create('/');
         $request->setSession(new Session(new MockArraySessionStorage()));
 
         $requestStack = new RequestStack();
         $requestStack->push($request);
 
-        return new SessionStore($requestStack, 'symfony');
+        return new SessionMessageStore($requestStack, 'symfony');
     },
     'surrealdb' => static fn (): SurrealDbMessageStore => new SurrealDbMessageStore(
         httpClient: http_client(),
