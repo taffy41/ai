@@ -13,7 +13,7 @@ require_once dirname(__DIR__).'/bootstrap.php';
 
 use Doctrine\DBAL\DriverManager;
 use MongoDB\Client as MongoDbClient;
-use Symfony\AI\Chat\Bridge\Cache\Store as CacheStore;
+use Symfony\AI\Chat\Bridge\Cache\MessageStore as CacheStore;
 use Symfony\AI\Chat\Bridge\Doctrine\DoctrineDbalMessageStore;
 use Symfony\AI\Chat\Bridge\HttpFoundation\SessionStore;
 use Symfony\AI\Chat\Bridge\Meilisearch\MessageStore as MeilisearchMessageStore;
