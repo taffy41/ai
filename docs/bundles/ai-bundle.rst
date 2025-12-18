@@ -868,7 +868,7 @@ To inject only specific tools, list them in the configuration:
         agent:
             my_agent:
                 tools:
-                    - 'Symfony\AI\Agent\Toolbox\Tool\SimilaritySearch'
+                    - 'Symfony\AI\Agent\Bridge\SimilaritySearch\SimilaritySearch'
 
 To restrict the access to a tool, you can use the :class:`Symfony\\AI\\Agent\\Attribute\\IsGrantedTool` attribute, which
 works similar to :class:`Symfony\\Component\\Security\\Http\\Attribute\\IsGranted` attribute in `symfony/security-http`. For this to work,
