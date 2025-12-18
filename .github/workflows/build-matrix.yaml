@@ -15,12 +15,21 @@ on:
             store-bridges:
                 description: 'List of store bridges'
                 value: ${{ jobs.matrix.outputs.store-bridges }}
+            store-bridges-include:
+                description: 'Store bridges includes for test matrix'
+                value: ${{ jobs.matrix.outputs.store-bridges-include }}
             tool-bridges:
                 description: 'List of tool bridges'
                 value: ${{ jobs.matrix.outputs.tool-bridges }}
+            tool-bridges-include:
+                description: 'Tool bridges includes for test matrix'
+                value: ${{ jobs.matrix.outputs.tool-bridges-include }}
             platform-bridges:
                 description: 'List of platform bridges'
                 value: ${{ jobs.matrix.outputs.platform-bridges }}
+            platform-bridges-include:
+                description: 'Platform bridges includes for test matrix'
+                value: ${{ jobs.matrix.outputs.platform-bridges-include }}
 
 jobs:
     matrix:
@@ -31,8 +40,11 @@ jobs:
             packages-include: ${{ steps.set-matrix.outputs.packages-include }}
             bridges: ${{ steps.set-matrix.outputs.bridges }}
             store-bridges: ${{ steps.set-matrix.outputs.store-bridges }}
+            store-bridges-include: ${{ steps.set-matrix.outputs.store-bridges-include }}
             tool-bridges: ${{ steps.set-matrix.outputs.tool-bridges }}
+            tool-bridges-include: ${{ steps.set-matrix.outputs.tool-bridges-include }}
             platform-bridges: ${{ steps.set-matrix.outputs.platform-bridges }}
+            platform-bridges-include: ${{ steps.set-matrix.outputs.platform-bridges-include }}
         steps:
             - name: Checkout
               uses: actions/checkout@v6
@@ -75,6 +87,31 @@ jobs:
                   echo "store-bridges=$(echo "$STORE_BRIDGES" | jq -c 'map(del(.type))')" >> $GITHUB_OUTPUT
                   echo "tool-bridges=$(echo "$TOOL_BRIDGES" | jq -c 'map(del(.type))')" >> $GITHUB_OUTPUT
                   echo "platform-bridges=$(echo "$PLATFORM_BRIDGES" | jq -c 'map({bridge: .bridge})')" >> $GITHUB_OUTPUT
+
+                  # Bridge includes (8.2 lowest, 8.2 highest, 8.5 highest)
+                  STORE_BRIDGES_INCLUDE=$(echo "$STORE_BRIDGES" | jq -c '
+                      . as $bridges |
+                      ($bridges | map({bridge: {component: .component, bridge: .bridge}, "php-version": "8.2", "dependency-version": "lowest"})) +
+                      ($bridges | map({bridge: {component: .component, bridge: .bridge}, "php-version": "8.2", "dependency-version": "highest"})) +
+                      ($bridges | map({bridge: {component: .component, bridge: .bridge}, "php-version": "8.5", "dependency-version": "highest"}))
+                  ')
+                  echo "store-bridges-include=$STORE_BRIDGES_INCLUDE" >> $GITHUB_OUTPUT
+
+                  TOOL_BRIDGES_INCLUDE=$(echo "$TOOL_BRIDGES" | jq -c '
+                      . as $bridges |
+                      ($bridges | map({bridge: {component: .component, bridge: .bridge}, "php-version": "8.2", "dependency-version": "lowest"})) +
+                      ($bridges | map({bridge: {component: .component, bridge: .bridge}, "php-version": "8.2", "dependency-version": "highest"})) +
+                      ($bridges | map({bridge: {component: .component, bridge: .bridge}, "php-version": "8.5", "dependency-version": "highest"}))
+                  ')
+                  echo "tool-bridges-include=$TOOL_BRIDGES_INCLUDE" >> $GITHUB_OUTPUT
+
+                  PLATFORM_BRIDGES_INCLUDE=$(echo "$PLATFORM_BRIDGES" | jq -c '
+                      . as $bridges |
+                      ($bridges | map({bridge: {bridge: .bridge}, "php-version": "8.2", "dependency-version": "lowest"})) +
+                      ($bridges | map({bridge: {bridge: .bridge}, "php-version": "8.2", "dependency-version": "highest"})) +
+                      ($bridges | map({bridge: {bridge: .bridge}, "php-version": "8.5", "dependency-version": "highest"}))
+                  ')
+                  echo "platform-bridges-include=$PLATFORM_BRIDGES_INCLUDE" >> $GITHUB_OUTPUT
 
                   # Package includes (lowest, Symfony 7.4, Symfony 8.0)
                   PACKAGES_INCLUDE=$(echo "$PACKAGES" | jq -c '

@@ -76,12 +76,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                bridge: ${{ fromJson(needs.matrix.outputs.store-bridges) }}
-                php-version: ['8.2', '8.5']
-                dependency-version: ['highest']
-                include:
-                    -   php-version: '8.2'
-                        dependency-version: 'lowest'
+                include: ${{ fromJson(needs.matrix.outputs.store-bridges-include) }}
 
         steps:
             - name: Checkout
@@ -115,12 +110,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                bridge: ${{ fromJson(needs.matrix.outputs.tool-bridges) }}
-                php-version: ['8.2', '8.5']
-                dependency-version: ['highest']
-                include:
-                    -   php-version: '8.2'
-                        dependency-version: 'lowest'
+                include: ${{ fromJson(needs.matrix.outputs.tool-bridges-include) }}
 
         steps:
             - name: Checkout
@@ -154,12 +144,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                bridge: ${{ fromJson(needs.matrix.outputs.platform-bridges) }}
-                php-version: ['8.2', '8.5']
-                dependency-version: ['highest']
-                include:
-                    -   php-version: '8.2'
-                        dependency-version: 'lowest'
+                include: ${{ fromJson(needs.matrix.outputs.platform-bridges-include) }}
 
         steps:
             - name: Checkout
