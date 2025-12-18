@@ -70,7 +70,7 @@ jobs:
               run: cd src/${{ matrix.package.path }} && vendor/bin/phpunit
 
     store-bridges:
-        name: Unit / Store / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}${{ matrix.symfony-version && format(' / Symfony {0}', matrix.symfony-version) || '' }}
+        name: Unit / Store / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}
         needs: matrix
         runs-on: ubuntu-latest
         strategy:
@@ -78,12 +78,10 @@ jobs:
             matrix:
                 bridge: ${{ fromJson(needs.matrix.outputs.store-bridges) }}
                 php-version: ['8.2', '8.5']
-                dependency-version: ['']
-                symfony-version: ['']
-                include: ${{ fromJson(needs.matrix.outputs.store-bridges-include) }}
-
-        env:
-            SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=7.4' }}
+                dependency-version: ['highest']
+                include:
+                    -   php-version: '8.2'
+                        dependency-version: 'lowest'
 
         steps:
             - name: Checkout
@@ -105,13 +103,13 @@ jobs:
               uses: ramsey/composer-install@v3
               with:
                   working-directory: src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }}
-                  dependency-versions: ${{ matrix.dependency-version || 'highest' }}
+                  dependency-versions: ${{ matrix.dependency-version }}
 
             - name: Run PHPUnit
               run: cd src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }} && vendor/bin/phpunit
 
     tool-bridges:
-        name: Unit / Tool / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}${{ matrix.symfony-version && format(' / Symfony {0}', matrix.symfony-version) || '' }}
+        name: Unit / Tool / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}
         needs: matrix
         runs-on: ubuntu-latest
         strategy:
@@ -119,12 +117,10 @@ jobs:
             matrix:
                 bridge: ${{ fromJson(needs.matrix.outputs.tool-bridges) }}
                 php-version: ['8.2', '8.5']
-                dependency-version: ['']
-                symfony-version: ['']
-                include: ${{ fromJson(needs.matrix.outputs.tool-bridges-include) }}
-
-        env:
-            SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=7.4' }}
+                dependency-version: ['highest']
+                include:
+                    -   php-version: '8.2'
+                        dependency-version: 'lowest'
 
         steps:
             - name: Checkout
@@ -146,13 +142,13 @@ jobs:
               uses: ramsey/composer-install@v3
               with:
                   working-directory: src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }}
-                  dependency-versions: ${{ matrix.dependency-version || 'highest' }}
+                  dependency-versions: ${{ matrix.dependency-version }}
 
             - name: Run PHPUnit
               run: cd src/${{ matrix.bridge.component }}/src/Bridge/${{ matrix.bridge.bridge }} && vendor/bin/phpunit
 
     platform-bridges:
-        name: Unit / Platform / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}${{ matrix.symfony-version && format(' / Symfony {0}', matrix.symfony-version) || '' }}
+        name: Unit / Platform / ${{ matrix.bridge.bridge }} / PHP ${{ matrix.php-version }}${{ matrix.dependency-version == 'lowest' && ' / lowest' || '' }}
         needs: matrix
         runs-on: ubuntu-latest
         strategy:
@@ -160,12 +156,10 @@ jobs:
             matrix:
                 bridge: ${{ fromJson(needs.matrix.outputs.platform-bridges) }}
                 php-version: ['8.2', '8.5']
-                dependency-version: ['']
-                symfony-version: ['']
-                include: ${{ fromJson(needs.matrix.outputs.platform-bridges-include) }}
-
-        env:
-            SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=7.4' }}
+                dependency-version: ['highest']
+                include:
+                    -   php-version: '8.2'
+                        dependency-version: 'lowest'
 
         steps:
             - name: Checkout
@@ -182,11 +176,6 @@ jobs:
                   php-version: ${{ matrix.php-version }}
                   tools: flex
                   extensions: ${{ env.REQUIRED_PHP_EXTENSIONS }}
-
-            # Deptrac does not support Symfony 8.0 yet
-            - name: Remove deptrac (Symfony 8.0)
-              if: matrix.symfony-version == '8.0.*'
-              run: composer remove --dev deptrac/deptrac --no-update
 
             - name: Install root dependencies
               uses: ramsey/composer-install@v3
@@ -202,7 +191,7 @@ jobs:
               uses: ramsey/composer-install@v3
               with:
                   working-directory: src/platform/src/Bridge/${{ matrix.bridge.bridge }}
-                  dependency-versions: ${{ matrix.dependency-version || 'highest' }}
+                  dependency-versions: ${{ matrix.dependency-version }}
 
             - name: Run PHPUnit
               run: cd src/platform/src/Bridge/${{ matrix.bridge.bridge }} && vendor/bin/phpunit

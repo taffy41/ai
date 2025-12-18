@@ -15,21 +15,12 @@ on:
             store-bridges:
                 description: 'List of store bridges'
                 value: ${{ jobs.matrix.outputs.store-bridges }}
-            store-bridges-include:
-                description: 'Store bridge includes for test matrix'
-                value: ${{ jobs.matrix.outputs.store-bridges-include }}
             tool-bridges:
                 description: 'List of tool bridges'
                 value: ${{ jobs.matrix.outputs.tool-bridges }}
-            tool-bridges-include:
-                description: 'Tool bridge includes for test matrix'
-                value: ${{ jobs.matrix.outputs.tool-bridges-include }}
             platform-bridges:
                 description: 'List of platform bridges'
                 value: ${{ jobs.matrix.outputs.platform-bridges }}
-            platform-bridges-include:
-                description: 'Platform bridge includes for test matrix'
-                value: ${{ jobs.matrix.outputs.platform-bridges-include }}
 
 jobs:
     matrix:
@@ -40,11 +31,8 @@ jobs:
             packages-include: ${{ steps.set-matrix.outputs.packages-include }}
             bridges: ${{ steps.set-matrix.outputs.bridges }}
             store-bridges: ${{ steps.set-matrix.outputs.store-bridges }}
-            store-bridges-include: ${{ steps.set-matrix.outputs.store-bridges-include }}
             tool-bridges: ${{ steps.set-matrix.outputs.tool-bridges }}
-            tool-bridges-include: ${{ steps.set-matrix.outputs.tool-bridges-include }}
             platform-bridges: ${{ steps.set-matrix.outputs.platform-bridges }}
-            platform-bridges-include: ${{ steps.set-matrix.outputs.platform-bridges-include }}
         steps:
             - name: Checkout
               uses: actions/checkout@v6
@@ -98,36 +86,6 @@ jobs:
                   ')
                   echo "packages-include=$PACKAGES_INCLUDE" >> $GITHUB_OUTPUT
 
-                  # Store bridge includes
-                  STORE_BRIDGES_INCLUDE=$(echo "$STORE_BRIDGES" | jq -c '
-                      map(del(.type)) as $bridges |
-                      ($bridges | map(. + {"php-version": "8.2", "dependency-version": "lowest"})) +
-                      ($bridges | map(. + {"php-version": "8.2", "symfony-version": "7.4.*"})) +
-                      ($bridges | map(. + {"php-version": "8.5", "symfony-version": "8.0.*"}))
-                      | map({bridge: {component: .component, bridge: .bridge}} + (. | del(.component, .bridge)))
-                  ')
-                  echo "store-bridges-include=$STORE_BRIDGES_INCLUDE" >> $GITHUB_OUTPUT
-
-                  # Tool bridge includes
-                  TOOL_BRIDGES_INCLUDE=$(echo "$TOOL_BRIDGES" | jq -c '
-                      map(del(.type)) as $bridges |
-                      ($bridges | map(. + {"php-version": "8.2", "dependency-version": "lowest"})) +
-                      ($bridges | map(. + {"php-version": "8.2", "symfony-version": "7.4.*"})) +
-                      ($bridges | map(. + {"php-version": "8.5", "symfony-version": "8.0.*"}))
-                      | map({bridge: {component: .component, bridge: .bridge}} + (. | del(.component, .bridge)))
-                  ')
-                  echo "tool-bridges-include=$TOOL_BRIDGES_INCLUDE" >> $GITHUB_OUTPUT
-
-                  # Platform bridge includes
-                  PLATFORM_BRIDGES_INCLUDE=$(echo "$PLATFORM_BRIDGES" | jq -c '
-                      map({bridge: .bridge}) as $bridges |
-                      ($bridges | map(. + {"php-version": "8.2", "dependency-version": "lowest"})) +
-                      ($bridges | map(. + {"php-version": "8.2", "symfony-version": "7.4.*"})) +
-                      ($bridges | map(. + {"php-version": "8.5", "symfony-version": "8.0.*"}))
-                      | map({bridge: {bridge: .bridge}} + (. | del(.bridge)))
-                  ')
-                  echo "platform-bridges-include=$PLATFORM_BRIDGES_INCLUDE" >> $GITHUB_OUTPUT
-
                   # Pretty print
                   echo "::group::Packages"
                   echo "$PACKAGES" | jq .
@@ -135,3 +93,4 @@ jobs:
                   echo "::group::Bridges"
                   echo "$BRIDGES" | jq .
                   echo "::endgroup::"
+
