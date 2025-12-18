@@ -25,36 +25,8 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    changes:
-        name: Detect Changes
-        runs-on: ubuntu-latest
-        outputs:
-            store: ${{ steps.filter.outputs.store }}
-            tool: ${{ steps.filter.outputs.tool }}
-            platform: ${{ steps.filter.outputs.platform }}
-            message-store: ${{ steps.filter.outputs.message-store }}
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v6
-
-            - name: Filter paths
-              id: filter
-              uses: dorny/paths-filter@v3
-              with:
-                  filters: |
-                      store:
-                        - 'src/store/src/Bridge/**'
-                      tool:
-                        - 'src/agent/src/Bridge/**'
-                      platform:
-                        - 'src/platform/src/Bridge/**'
-                      message-store:
-                        - 'src/chat/src/Bridge/**'
-
     validate_stores:
         name: Store Bridges
-        needs: changes
-        if: needs.changes.outputs.store == 'true'
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -71,8 +43,6 @@ jobs:
 
     validate_tools:
         name: Tool Bridges
-        needs: changes
-        if: needs.changes.outputs.tool == 'true'
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -89,8 +59,6 @@ jobs:
 
     validate_message_stores:
         name: Message Store Bridges
-        needs: changes
-        if: needs.changes.outputs.message-store == 'true'
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -107,8 +75,6 @@ jobs:
 
     validate_platforms:
         name: Platform Bridges
-        needs: changes
-        if: needs.changes.outputs.platform == 'true'
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
