@@ -73,10 +73,10 @@ deptrac:
       collectors:
         - type: classLike
           value: Symfony\\AI\\Chat\\Bridge\\Doctrine\\.*
-    - name: ChatHttpFoundationBridge
+    - name: ChatSessionBridge
       collectors:
         - type: classLike
-          value: Symfony\\AI\\Chat\\Bridge\\HttpFoundation\\.*
+          value: Symfony\\AI\\Chat\\Bridge\\Session\\.*
     - name: ChatMeilisearchBridge
       collectors:
         - type: classLike
@@ -332,7 +332,7 @@ deptrac:
     ChatDoctrineBridge:
       - ChatComponent
       - PlatformComponent
-    ChatHttpFoundationBridge:
+    ChatSessionBridge:
       - ChatComponent
       - PlatformComponent
     ChatMeilisearchBridge:

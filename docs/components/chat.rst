@@ -146,7 +146,7 @@ store and ``bin/console ai:message-store:drop`` to clean up the message store:
 .. _`Cloudflare`: https://developers.cloudflare.com/kv/
 .. _`Doctrine DBAL`: https://www.doctrine-project.org/projects/dbal.html
 .. _`InMemory`: https://www.php.net/manual/en/language.types.array.php
-.. _`HttpFoundation session`: https://developers.cloudflare.com/vectorize/
+.. _`HttpFoundation session`: https://symfony.com/doc/current/session.html
 .. _`Meilisearch`: https://www.meilisearch.com/
 .. _`MongoDb`: https://www.mongodb.com/
 .. _`Pogocache`: https://pogocache.com/
