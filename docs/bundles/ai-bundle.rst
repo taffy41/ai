@@ -82,7 +82,7 @@ Advanced Example with Multiple Agents
                       description: 'Provides the name of your company'
                       method: 'foo' # Optional with default value '__invoke'
 
-                    # Referencing a agent => agent in agent 🤯
+                    # Referencing an agent => agent in agent 🤯
                     - agent: 'research'
                       name: 'wikipedia_research'
                       description: 'Can research on Wikipedia'
