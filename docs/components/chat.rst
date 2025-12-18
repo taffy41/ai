@@ -66,8 +66,8 @@ for adding messages to the message store, and returning the messages from a stor
 
 This leads to a store implementing two methods::
 
+    use Symfony\AI\Chat\MessageStoreInterface;
     use Symfony\AI\Platform\Message\MessageBag;
-    use Symfony\AI\Store\MessageStoreInterface;
 
     class MyCustomStore implements MessageStoreInterface
     {
@@ -91,8 +91,8 @@ to setup and drop the store.
 
 This leads to a store implementing two methods::
 
-    use Symfony\AI\Store\ManagedStoreInterface;
-    use Symfony\AI\Store\MessageStoreInterface;
+    use Symfony\AI\Chat\ManagedStoreInterface;
+    use Symfony\AI\Chat\MessageStoreInterface;
 
     class MyCustomStore implements ManagedStoreInterface, MessageStoreInterface
     {
