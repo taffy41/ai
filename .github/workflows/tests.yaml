@@ -207,12 +207,8 @@ jobs:
             - name: Run PHPUnit
               run: cd src/platform/src/Bridge/${{ matrix.bridge.bridge }} && vendor/bin/phpunit
 
-    # ===========================================
-    # Integration Tests (run after unit tests)
-    # ===========================================
     demo:
         name: Integration / Demo
-        needs: [packages, store-bridges, tool-bridges, platform-bridges]
         runs-on: ubuntu-latest
 
         steps:
