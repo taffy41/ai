@@ -32,6 +32,7 @@ jobs:
             store: ${{ steps.filter.outputs.store }}
             tool: ${{ steps.filter.outputs.tool }}
             platform: ${{ steps.filter.outputs.platform }}
+            message-store: ${{ steps.filter.outputs.message-store }}
         steps:
             - name: Checkout
               uses: actions/checkout@v6
@@ -47,6 +48,8 @@ jobs:
                         - 'src/agent/src/Bridge/**'
                       platform:
                         - 'src/platform/src/Bridge/**'
+                      message-store:
+                        - 'src/chat/src/Bridge/**'
 
     validate_stores:
         name: Store Bridges
@@ -83,6 +86,24 @@ jobs:
 
             - name: Validate tool bridges have required files
               run: .github/scripts/validate-bridge-files.sh tool agent
+
+    validate_message_stores:
+        name: Message Store Bridges
+        needs: changes
+        if: needs.changes.outputs.message-store == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Validate message store bridge naming conventions
+              run: .github/scripts/validate-bridge-naming.sh message-store chat
+
+            - name: Validate message store bridges are in splitsh.json
+              run: .github/scripts/validate-bridge-splitsh.sh message-store chat
+
+            - name: Validate message store bridges have required files
+              run: .github/scripts/validate-bridge-files.sh message-store chat
 
     validate_platforms:
         name: Platform Bridges
