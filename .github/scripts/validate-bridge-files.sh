@@ -31,7 +31,7 @@ REQUIRED_FILES=(
     "README.md"
     ".gitignore"
     ".gitattributes"
-    ".github/close-pull-request.yml"
+    ".github/workflows/close-pull-request.yml"
     ".github/PULL_REQUEST_TEMPLATE.md"
 )
 
