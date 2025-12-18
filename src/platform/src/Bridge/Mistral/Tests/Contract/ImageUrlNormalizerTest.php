@@ -27,7 +27,7 @@ final class ImageUrlNormalizerTest extends TestCase
         $this->assertTrue($normalizer->supportsNormalization(new ImageUrl('https://example.com/image.png'), context: [
             Contract::CONTEXT_MODEL => new Mistral('mistral-large-latest'),
         ]));
-        $this->assertFalse($normalizer->supportsNormalization('not a image url'));
+        $this->assertFalse($normalizer->supportsNormalization('not an image url'));
     }
 
     public function testGetSupportedTypes()
