@@ -66,7 +66,8 @@ return (new PhpCsFixer\Config())
             ->exclude(['ai.symfony.com', 'var', 'vendor'])
             ->notPath([
                 'demo/config/reference.php',
-                'src/mate/resources/mate/(config|extensions).php',
+                'src/mate/resources/mate/config.php',
+                'src/mate/resources/mate/extensions.php',
             ])
     )
 ;
