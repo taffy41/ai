@@ -29,13 +29,13 @@
         "phpstan/phpdoc-parser": "^2.1",
         "psr/log": "^3.0",
         "symfony/ai-platform": "^0.1",
-        "symfony/clock": "^7.3|^8.0",
-        "symfony/http-client": "^7.3|^8.0",
+        "symfony/clock": "^6.4|^7.4|^8.0",
+        "symfony/http-client": "^6.4|^7.4|^8.0",
         "symfony/polyfill-php85": "^1.33",
-        "symfony/property-access": "^7.3|^8.0",
-        "symfony/property-info": "^7.3|^8.0",
-        "symfony/serializer": "^7.3|^8.0",
-        "symfony/type-info": "^7.3|^8.0"
+        "symfony/property-access": "^6.4|^7.4|^8.0",
+        "symfony/property-info": "^6.4|^7.4|^8.0",
+        "symfony/serializer": "^6.4|^7.4|^8.0",
+        "symfony/type-info": "^6.4|^7.4|^8.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.1",
@@ -43,8 +43,8 @@
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpunit/phpunit": "^11.5.46",
         "symfony/ai-store": "^0.1",
-        "symfony/event-dispatcher": "^7.3|^8.0",
-        "symfony/translation": "^7.3|^8.0",
+        "symfony/event-dispatcher": "^6.4|^7.4|^8.0",
+        "symfony/translation": "^6.4|^7.4|^8.0",
         "symfony/translation-contracts": "^3.6"
     },
     "minimum-stability": "dev",
