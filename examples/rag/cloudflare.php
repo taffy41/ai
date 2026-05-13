@@ -17,7 +17,7 @@ use Symfony\AI\Fixtures\Movies;
 use Symfony\AI\Platform\Bridge\OpenAi\Factory;
 use Symfony\AI\Platform\Message\Message;
 use Symfony\AI\Platform\Message\MessageBag;
-use Symfony\AI\Store\Bridge\Cloudflare\Store;
+use Symfony\AI\Store\Bridge\Cloudflare\StoreFactory;
 use Symfony\AI\Store\Document\Metadata;
 use Symfony\AI\Store\Document\TextDocument;
 use Symfony\AI\Store\Document\Vectorizer;
@@ -29,11 +29,11 @@ use Symfony\Component\Uid\Uuid;
 require_once dirname(__DIR__).'/bootstrap.php';
 
 // initialize the store
-$store = new Store(
-    httpClient: http_client(),
+$store = StoreFactory::create(
+    index: 'movies',
     accountId: env('CLOUDFLARE_ACCOUNT_ID'),
     apiKey: env('CLOUDFLARE_API_KEY'),
-    index: 'movies',
+    httpClient: http_client(),
 );
 
 // initialize the index
