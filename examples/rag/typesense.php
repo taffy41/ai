@@ -17,7 +17,7 @@ use Symfony\AI\Fixtures\Movies;
 use Symfony\AI\Platform\Bridge\OpenAi\Factory;
 use Symfony\AI\Platform\Message\Message;
 use Symfony\AI\Platform\Message\MessageBag;
-use Symfony\AI\Store\Bridge\Typesense\Store;
+use Symfony\AI\Store\Bridge\Typesense\StoreFactory;
 use Symfony\AI\Store\Document\Metadata;
 use Symfony\AI\Store\Document\TextDocument;
 use Symfony\AI\Store\Document\Vectorizer;
@@ -29,11 +29,11 @@ use Symfony\Component\Uid\Uuid;
 require_once dirname(__DIR__).'/bootstrap.php';
 
 // initialize the store
-$store = new Store(
-    httpClient: http_client(),
-    endpointUrl: env('TYPESENSE_HOST'),
-    apiKey: env('TYPESENSE_API_KEY'),
+$store = StoreFactory::create(
     collection: 'movies',
+    endpoint: env('TYPESENSE_HOST'),
+    apiKey: env('TYPESENSE_API_KEY'),
+    httpClient: http_client(),
 );
 
 // initialize the index
