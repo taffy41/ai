@@ -1,3 +1,12 @@
+UPGRADE FROM 0.9 to 0.10
+========================
+
+Store
+-----
+
+ * The `ClickHouse`, `Redis`, `SurrealDb`, and `InMemory` store implementations are now `final`.
+   Extending them is no longer possible; compose or decorate `StoreInterface` instead.
+
 UPGRADE FROM 0.8 to 0.9
 =======================
 
