@@ -569,8 +569,10 @@ Prompt Caching (Anthropic)
 
 Anthropic supports `prompt caching`_, which can significantly reduce costs and
 latency for repeated prompts. Symfony AI automatically enables prompt caching
-when using the Anthropic bridge by annotating the last user message with a
-``cache_control`` marker.
+when using the Anthropic bridge by annotating the most cacheable regions of the
+request with ``cache_control`` markers: the system prompt, the last tool
+definition, and the last user message. The system prompt is typically the
+largest and most stable region, making it the most effective caching target.
 
 The caching behavior is configured via the ``cacheRetention`` parameter on the
 :class:`Symfony\\AI\\Platform\\Bridge\\Anthropic\\ModelClient`::
