@@ -94,6 +94,35 @@ the default catalog. The ``ModelCatalog`` automatically queries the model inform
         Message::ofUser(...)
     ));
 
+Passing a Model Instance
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Instead of a model name string, you can hand a fully defined model instance to ``Platform::invoke()``. This
+skips the catalog lookup entirely and is useful when a provider ships a model that is not (yet) part of the
+shipped catalog, without registering it or replacing the catalog::
+
+    use Symfony\AI\Platform\Bridge\OpenAi\Gpt;
+    use Symfony\AI\Platform\Capability;
+    use Symfony\AI\Platform\Message\Message;
+    use Symfony\AI\Platform\Message\MessageBag;
+
+    $model = new Gpt('gpt-newest', [
+        Capability::INPUT_MESSAGES,
+        Capability::OUTPUT_TEXT,
+        Capability::TOOL_CALLING,
+    ], ['temperature' => 0.5]);
+
+    $result = $platform->invoke($model, new MessageBag(Message::ofUser(...)));
+
+.. note::
+
+    You must pass a **bridge-specific** model subclass (e.g. ``Gpt``, ``Claude``, ``Gemini``), not the base
+    :class:`Symfony\\AI\\Platform\\Model`. Model clients, result converters, and contract normalizers select
+    the right implementation via the concrete class, so a bare ``Model`` instance has no client to handle it.
+    The platform routes the instance to the first provider whose model clients accept it; in multi-provider
+    setups where the same class is shared (e.g. OpenAI and Azure both use ``Gpt``), the first matching provider
+    wins.
+
 Supported Models & Platforms
 ----------------------------
 
