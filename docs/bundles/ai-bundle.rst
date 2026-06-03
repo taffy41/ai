@@ -329,6 +329,57 @@ You can also define models for the vectorizer this way:
             embeddings:
                 model: 'text-embedding-3-small?dimensions=512&encoding_format=float'
 
+Adding Models to a Platform's Catalog
+-------------------------------------
+
+Each platform ships with a built-in model catalog that knows the available models and their
+capabilities. When you use a model that is not part of the built-in catalog – for example a
+local model served by `LM Studio`_ or `Ollama`_, or a freshly released model that has not been
+added to the bridge yet – you can register it through the ``model`` configuration key without
+having to wait for a new release or override the catalog service.
+
+Models are added per platform, keyed by the platform name. For each model you provide the model
+class and the list of capabilities it supports:
+
+.. code-block:: yaml
+
+    # config/packages/ai.yaml
+    ai:
+        platform:
+            lmstudio:
+                host_url: '%env(LMSTUDIO_HOST_URL)%'
+
+        model:
+            lmstudio:
+                qwen3-coder-next:
+                    class: 'Symfony\AI\Platform\Bridge\Generic\CompletionsModel'
+                    capabilities:
+                        - !php/const Symfony\AI\Platform\Capability::INPUT_MESSAGES
+                        - !php/const Symfony\AI\Platform\Capability::INPUT_IMAGE
+                        - !php/const Symfony\AI\Platform\Capability::OUTPUT_TEXT
+                        - !php/const Symfony\AI\Platform\Capability::OUTPUT_STREAMING
+                        - !php/const Symfony\AI\Platform\Capability::TOOL_CALLING
+                        - !php/const Symfony\AI\Platform\Capability::OUTPUT_STRUCTURED
+
+        agent:
+            coder:
+                platform: 'ai.platform.lmstudio'
+                model: 'qwen3-coder-next'
+
+The configured models are merged into the platform's built-in catalog and take precedence over
+models defined there with the same name, so you can also use this to override the capabilities of
+an existing model.
+
+* ``class`` (string): The fully qualified class name of the model. It must extend
+  :class:`Symfony\\AI\\Platform\\Model`. For platforms based on the generic bridge, use
+  :class:`Symfony\\AI\\Platform\\Bridge\\Generic\\CompletionsModel` for chat/completion models or
+  :class:`Symfony\\AI\\Platform\\Bridge\\Generic\\EmbeddingsModel` for embedding models.
+* ``capabilities`` (list): The :class:`Symfony\\AI\\Platform\\Capability` cases the model supports.
+  At least one capability must be specified for each model.
+
+.. _`LM Studio`: https://lmstudio.ai/
+.. _`Ollama`: https://ollama.com/
+
 HTTP Client Configuration
 -------------------------
 
