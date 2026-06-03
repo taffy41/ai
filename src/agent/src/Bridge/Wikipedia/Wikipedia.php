@@ -27,8 +27,8 @@ final class Wikipedia implements HasSourcesInterface
     use HasSourcesTrait;
 
     public function __construct(
-        private HttpClientInterface $httpClient,
-        private string $locale = 'en',
+        private readonly HttpClientInterface $httpClient,
+        private readonly string $locale = 'en',
     ) {
     }
 
