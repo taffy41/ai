@@ -102,6 +102,7 @@ Advanced Example with Multiple Agents
                 tools: # Tools are opt-in: if undefined, the agent gets no tools; use "tools: true" to inject all tools.
                     - 'Symfony\AI\Agent\Bridge\Wikipedia\Wikipedia'
                 fault_tolerant_toolbox: false # Disables fault tolerant toolbox, default is true
+                max_tool_calls: 75 # Cap of tool-calling iterations per agent call (default 50); set to null to disable the limit
             search_agent:
                 platform: 'ai.platform.perplexity'
                 model: 'sonar'
