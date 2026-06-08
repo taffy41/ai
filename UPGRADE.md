@@ -1,6 +1,51 @@
 UPGRADE FROM 0.9 to 0.10
 ========================
 
+Platform
+--------
+
+ * The models.dev bridge `Factory` and `BridgeResolver` classes were removed. Build providers with
+   the regular bridge factories, passing a models.dev `ModelCatalog` (which now carries the model
+   class the target bridge expects), and resolve base URLs with `ProviderRegistry`.
+
+   For a provider with a specialized bridge:
+
+   ```diff
+   -use Symfony\AI\Platform\Bridge\ModelsDev\Factory;
+   -
+   -$platform = Factory::createPlatform('anthropic', $_ENV['ANTHROPIC_API_KEY']);
+   +use Symfony\AI\Platform\Bridge\Anthropic\Factory as AnthropicFactory;
+   +use Symfony\AI\Platform\Bridge\ModelsDev\ModelCatalog;
+   +
+   +$platform = AnthropicFactory::createPlatform(
+   +    apiKey: $_ENV['ANTHROPIC_API_KEY'],
+   +    modelCatalog: new ModelCatalog('anthropic'),
+   +);
+   ```
+
+   For an OpenAI-compatible provider:
+
+   ```diff
+   -use Symfony\AI\Platform\Bridge\ModelsDev\Factory;
+   -
+   -$platform = Factory::createPlatform('deepseek', $_ENV['DEEPSEEK_API_KEY']);
+   +use Symfony\AI\Platform\Bridge\Generic\Factory as GenericFactory;
+   +use Symfony\AI\Platform\Bridge\ModelsDev\ModelCatalog;
+   +use Symfony\AI\Platform\Bridge\ModelsDev\ProviderRegistry;
+   +
+   +$registry = new ProviderRegistry();
+   +$platform = GenericFactory::createPlatform(
+   +    baseUrl: $registry->getApiBaseUrl('deepseek'),
+   +    apiKey: $_ENV['DEEPSEEK_API_KEY'],
+   +    modelCatalog: new ModelCatalog('deepseek'),
+   +);
+   ```
+
+ * The models.dev bridge `ModelResolver` class was removed. To route across multiple providers,
+   compose them into a `Platform` and rely on its default router (`CatalogBasedModelRouter`), which
+   picks the first provider in array order whose catalog owns the model; order the providers to
+   disambiguate model ids exposed by more than one of them.
+
 Store
 -----
 

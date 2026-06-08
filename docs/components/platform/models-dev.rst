@@ -1,8 +1,16 @@
 Models.dev Platform
 ===================
 
-The models.dev bridge provides auto-discovered model catalogs for many AI
-providers using data from the `models.dev`_ community registry.
+The models.dev bridge brings model catalogs for many AI providers to Symfony AI,
+sourced from the `models.dev`_ community registry and shipped as the standalone
+``symfony/models-dev`` package.
+
+Its main benefit is decoupling the **model catalog lifecycle** from the Symfony AI
+release cycle. Every bridge ships a hand-curated catalog of known models that only
+changes when you upgrade the bridge itself. The models.dev bridge replaces that with a
+dynamic catalog you refresh independently: ``composer update symfony/models-dev`` picks
+up newly released models and their capabilities without bumping ``symfony/ai-platform``
+or editing any catalog by hand.
 
 Installation
 ------------
@@ -29,75 +37,94 @@ Refer to each provider's documentation for how to obtain an API key.
 Usage
 -----
 
-Using the Factory
-~~~~~~~~~~~~~~~~~
+Using the Model Catalog
+~~~~~~~~~~~~~~~~~~~~~~~
 
-The simplest way to get started is with ``Factory``, which auto-detects
-the API base URL from the models.dev data::
+At its core the bridge provides a ``ModelCatalog`` that reads the models.dev data for a
+given provider. It is wired with the model classes the matching bridge expects, so it drops
+straight into that bridge in place of its bundled catalog.
 
-    use Symfony\AI\Platform\Bridge\ModelsDev\Factory;
-    use Symfony\AI\Platform\Message\Message;
-    use Symfony\AI\Platform\Message\MessageBag;
+For any OpenAI-compatible provider, pair it with the Generic bridge::
 
-    // Auto-detect base URL from models.dev data
-    $platform = Factory::createPlatform(
-        provider: 'deepseek',
+    use Symfony\AI\Platform\Bridge\Generic\Factory as GenericFactory;
+    use Symfony\AI\Platform\Bridge\ModelsDev\ModelCatalog;
+
+    $platform = GenericFactory::createPlatform(
+        baseUrl: 'https://api.deepseek.com',
         apiKey: $_ENV['DEEPSEEK_API_KEY'],
+        modelCatalog: new ModelCatalog('deepseek'),
     );
 
-    $messages = new MessageBag(
-        Message::forSystem('You are a helpful assistant.'),
-        Message::ofUser('What is the Symfony framework?'),
+For a provider that needs a specialized bridge, pair it with that bridge. The catalog already
+carries the model class that bridge requires (e.g. ``Claude`` for Anthropic), based on the
+provider's models.dev entry::
+
+    use Symfony\AI\Platform\Bridge\Anthropic\Factory as AnthropicFactory;
+    use Symfony\AI\Platform\Bridge\ModelsDev\ModelCatalog;
+
+    $platform = AnthropicFactory::createPlatform(
+        apiKey: $_ENV['ANTHROPIC_API_KEY'],
+        modelCatalog: new ModelCatalog('anthropic'),
     );
 
-    $result = $platform->invoke('deepseek-chat', $messages);
-    echo $result->asText();
+This is the key feature of the bridge: your model definitions stay current independently
+of the Symfony AI release cycle, refreshed with ``composer update symfony/models-dev``.
 
-For providers where models.dev does not publish an API base URL, you must provide it
-explicitly. The base URL should **not** include the ``/v1`` suffix as it will be added
-automatically::
+Multiple Providers in one Platform
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    $platform = Factory::createPlatform(
-        provider: 'groq',
-        apiKey: $_ENV['GROQ_API_KEY'],
-        baseUrl: 'https://api.groq.com/openai',
-    );
+Compose providers from the regular bridges — each backed by a models.dev ``ModelCatalog`` —
+into a single ``Platform``. ``ProviderRegistry`` resolves the base URL for OpenAI-compatible
+providers (including the ones models.dev does not publish directly)::
 
-By default, the bridge uses the generic bridge for all OpenAI-compatible
-providers. However, some providers require specialized API. In that case, the
-bridge automatically detects and routes to specialized bridges when installed::
+    use Symfony\AI\Platform\Bridge\Anthropic\Factory as AnthropicFactory;
+    use Symfony\AI\Platform\Bridge\Generic\Factory as GenericFactory;
+    use Symfony\AI\Platform\Bridge\ModelsDev\ModelCatalog;
+    use Symfony\AI\Platform\Bridge\ModelsDev\ProviderRegistry;
+    use Symfony\AI\Platform\Platform;
 
-    // Anthropic bridge installed: routes automatically
-    $platform = Factory::createPlatform('anthropic', $_ENV['ANTHROPIC_API_KEY']);
+    $registry = new ProviderRegistry();
 
-The factory is designed to be simple and opinionated, using models.dev definitions
-for everything. Advanced options are available when needed::
+    $platform = new Platform([
+        GenericFactory::createProvider(
+            baseUrl: $registry->getApiBaseUrl('deepseek'),
+            apiKey: $_ENV['DEEPSEEK_API_KEY'],
+            modelCatalog: new ModelCatalog('deepseek'),
+            name: 'deepseek',
+        ),
+        AnthropicFactory::createProvider(
+            apiKey: $_ENV['ANTHROPIC_API_KEY'],
+            modelCatalog: new ModelCatalog('anthropic'),
+        ),
+    ]);
 
-    use Symfony\Component\HttpClient\HttpClient;
+    $platform->invoke('deepseek-chat', $messages);     // → deepseek
+    $platform->invoke('claude-haiku-4-5', $messages);  // → anthropic
 
-    $platform = Factory::createPlatform(
-        provider: 'deepseek',
-        apiKey: $_ENV['DEEPSEEK_API_KEY'],
-        httpClient: HttpClient::create(), // Optional: custom HTTP client
-        eventDispatcher: $dispatcher,     // Optional: for logging/monitoring
-    );
+Routing is a core Platform feature, the bridge only supplies the providers and catalogs. See
+the :doc:`Platform component <../platform>` documentation (*Providers and Multi-Provider
+Platforms*) for the routing mechanics and custom strategies.
 
-.. note::
-
-    The factory is intentionally minimal, if you need more flexibility, use the
-    dedicated provider bridges (Anthropic, Gemini, etc.) or the Generic bridge
-    directly.
+By default a model id resolves to the first provider (in array order) whose catalog knows it.
+When several providers expose the *same* model id (e.g. a first-party provider and an
+aggregator that re-lists it), order the array so the preferred provider comes first.
 
 Embeddings
 ~~~~~~~~~~
 
-Embedding models are automatically detected and routed to the
-``EmbeddingsModel`` class. Use them like any other embedding model::
+Embedding models are detected automatically and wired to the matching embeddings model
+class. Use them like any other embedding model::
 
-    $platform = Factory::createPlatform(
-        provider: 'openai',
+    use Symfony\AI\Platform\Bridge\Generic\Factory as GenericFactory;
+    use Symfony\AI\Platform\Bridge\ModelsDev\ModelCatalog;
+    use Symfony\AI\Platform\Bridge\ModelsDev\ProviderRegistry;
+
+    $registry = new ProviderRegistry();
+
+    $platform = GenericFactory::createPlatform(
+        baseUrl: $registry->getApiBaseUrl('openai'),
         apiKey: $_ENV['OPENAI_API_KEY'],
-        baseUrl: 'https://api.openai.com/v1',
+        modelCatalog: new ModelCatalog('openai'),
     );
 
     $result = $platform->invoke('text-embedding-3-small', 'What is Symfony?');
@@ -157,27 +184,24 @@ pass additional models when creating the ``ModelCatalog``::
 
 Additional models are merged with and take precedence over the bundled data.
 
-Provider Registry
-~~~~~~~~~~~~~~~~~
+Discovering Providers
+~~~~~~~~~~~~~~~~~~~~~
 
-The ``ProviderRegistry`` gives you access to provider metadata::
+The models.dev registry covers many providers. ``ProviderRegistry`` gives you access to
+their metadata, e.g. to list everything available and resolve their API base URL::
 
     use Symfony\AI\Platform\Bridge\ModelsDev\ProviderRegistry;
 
     $registry = new ProviderRegistry();
 
-    // List all available providers
-    $providerIds = $registry->getProviderIds();
-    // ['openai', 'anthropic', 'deepseek', 'groq', ...]
+    $registry->has('deepseek');                 // true
+    $registry->getProviderName('deepseek');     // "DeepSeek"
 
-    // Check if a provider exists
-    $registry->has('deepseek'); // true
-
-    // Get provider name
-    $registry->getProviderName('deepseek'); // "DeepSeek"
-
-    // Get API base URL (null if not published by models.dev)
-    $registry->getApiBaseUrl('deepseek'); // "https://api.deepseek.com"
+    foreach ($registry->getProviderIds() as $id) {
+        // null when no base URL is known (must then be passed explicitly)
+        $url = $registry->getApiBaseUrl($id) ?? '(manual)';
+        echo sprintf("%s: %s\n", $id, $url);
+    }
 
 Symfony Bundle Configuration
 ----------------------------
@@ -237,18 +261,6 @@ Configure multiple providers in the same application:
             class: 'Symfony\AI\Platform\Bridge\ModelsDev\ModelCatalog'
             arguments:
                 $providerId: 'groq'
-
-Supported Providers
--------------------
-
-The models.dev registry includes many providers. Use the ``ProviderRegistry``
-to list all available providers and check which have auto-detected base URLs::
-
-    $registry = new ProviderRegistry();
-    foreach ($registry->getProviderIds() as $id) {
-        $url = $registry->getApiBaseUrl($id) ?? '(manual)';
-        echo sprintf("%s: %s\n", $id, $url);
-    }
 
 Resources
 ---------
