@@ -1,0 +1,148 @@
+name: Monorepo Split (Symfony AI via GitHub App)
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ "*" ]
+  workflow_dispatch:
+
+# This only affects GITHUB_TOKEN (we're using an App token), but it's fine to keep.
+permissions:
+  contents: write
+
+env:
+  PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+
+jobs:
+  split-branches:
+    name: Split on branch pushes
+    if: ${{ github.event_name != 'push' || startsWith(github.ref, 'refs/heads/') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false  # prevent checkout from setting GITHUB_TOKEN creds
+
+      # --- Build splitsh-lite requirements ---
+      - name: Install build deps
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y build-essential cmake pkg-config \
+                                  libssl-dev libssh2-1-dev zlib1g-dev \
+                                  curl jq
+
+      - name: Build & install libgit2 v1.5.0 (needed by git2go v34)
+        run: |
+          set -euo pipefail
+          curl -L https://github.com/libgit2/libgit2/archive/refs/tags/v1.5.0.tar.gz -o libgit2.tar.gz
+          tar xf libgit2.tar.gz
+          cd libgit2-1.5.0
+          mkdir build && cd build
+          cmake .. -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local
+          cmake --build . -- -j"$(nproc)"
+          sudo cmake --install .
+          echo "/usr/local/lib" | sudo tee /etc/ld.so.conf.d/usr-local-lib.conf
+          sudo ldconfig
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Build splitsh-lite v2.0.0
+        env:
+          PKG_CONFIG_PATH: ${{ env.PKG_CONFIG_PATH }}
+        run: |
+          set -euo pipefail
+          curl -L https://github.com/splitsh/lite/archive/refs/tags/v2.0.0.tar.gz -o splitsh-lite.tar.gz
+          tar xf splitsh-lite.tar.gz
+          cd lite-2.0.0
+          go build -v -o ../splitsh-lite .
+          cd ..
+          chmod +x splitsh-lite
+          sudo mv splitsh-lite /usr/local/bin/splitsh-lite
+          splitsh-lite --version || true
+
+      # --- Create GitHub App token (scoped to the owner + repos) ---
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: taffy41
+          repositories: |
+            ai-platform
+            ai-agent
+            ai-store
+            ai-chat
+            ai-bundle
+            mcp-bundle
+          permissions: >-
+            {"contents":"write","metadata":"read"}
+
+      - name: Configure git identity & credentials
+        env:
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git config --global user.email "${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
+          git config --global user.name  "${{ steps.app-token.outputs.app-slug }}[bot]"
+          # inject the App token automatically for any https://github.com/* URL
+          git config --global url."https://x-access-token:${APP_TOKEN}@github.com/".insteadOf "https://github.com/"
+
+      - name: Quick diagnostics
+        env:
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          echo "App slug: ${{ steps.app-token.outputs.app-slug }}"
+          echo "Token expires at: ${{ steps.app-token.outputs.expires-at }}"
+          echo "Installation repositories visible to this token:"
+          curl -sS -H "Authorization: Bearer ${APP_TOKEN}" -H "Accept: application/vnd.github+json" \
+            https://api.github.com/installation/repositories | jq '.total_count, .repositories[].full_name'
+
+      - name: Define packages (HTTPS URLs)
+        run: |
+          cat > packages.json <<'JSON'
+          [
+            { "prefix": "src/platform",   "repo": "https://github.com/taffy41/ai-platform.git",  "branch": "main" },
+            { "prefix": "src/agent",      "repo": "https://github.com/taffy41/ai-agent.git",     "branch": "main" },
+            { "prefix": "src/store",      "repo": "https://github.com/taffy41/ai-store.git",     "branch": "main" },
+            { "prefix": "src/chat",       "repo": "https://github.com/taffy41/ai-chat.git",      "branch": "main" },
+            { "prefix": "src/ai-bundle",  "repo": "https://github.com/taffy41/ai-bundle.git",    "branch": "main" },
+            { "prefix": "src/mcp-bundle", "repo": "https://github.com/taffy41/mcp-bundle.git",   "branch": "main" }
+          ]
+          JSON
+
+      - name: Split & push each package (branches)
+        run: |
+          set -euo pipefail
+          git fetch --all --tags
+          jq -c '.[]' packages.json | while read -r row; do
+            prefix=$(echo "$row" | jq -r '.prefix')
+            repo=$(echo "$row"   | jq -r '.repo')
+            branch=$(echo "$row" | jq -r '.branch')
+
+            echo "::group::Splitting $prefix -> $repo ($branch)"
+            commit=$(splitsh-lite --prefix="$prefix" || true)
+            if [ -z "$commit" ]; then
+              echo "No commit produced for $prefix; skipping."
+              echo "::endgroup::"
+              continue
+            fi
+
+            split_branch="${prefix//\//-}-split"
+            git update-ref "refs/heads/$split_branch" "$commit"
+
+            # If target repo main is protected, this force push will fail.
+            # Option A (direct to main):
+            git push "$repo" "refs/heads/$split_branch:$branch" --force
+
+            # Option B (safer): push to split branch and open a PR out-of-band
+            # git push "$repo" "refs/heads/$split_branch:$split_branch" --force
+            echo "::endgroup::"
+          done
+
