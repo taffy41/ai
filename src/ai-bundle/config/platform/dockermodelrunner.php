@@ -15,8 +15,8 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 return (new ArrayNodeDefinition('dockermodelrunner'))
     ->children()
-        ->stringNode('host_url')->defaultValue('http://127.0.0.1:12434')->end()
-        ->stringNode('http_client')
+        ->scalarNode('host_url')->defaultValue('http://127.0.0.1:12434')->end()
+        ->scalarNode('http_client')
             ->defaultValue('http_client')
             ->info('Service ID of the HTTP client to use')
         ->end()

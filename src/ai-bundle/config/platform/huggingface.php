@@ -15,9 +15,9 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 return (new ArrayNodeDefinition('huggingface'))
     ->children()
-        ->stringNode('api_key')->isRequired()->end()
-        ->stringNode('provider')->defaultValue('hf-inference')->end()
-        ->stringNode('http_client')
+        ->scalarNode('api_key')->isRequired()->end()
+        ->scalarNode('provider')->defaultValue('hf-inference')->end()
+        ->scalarNode('http_client')
             ->defaultValue('http_client')
             ->info('Service ID of the HTTP client to use')
         ->end()

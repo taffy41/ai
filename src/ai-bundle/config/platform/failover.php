@@ -20,6 +20,6 @@ return (new ArrayNodeDefinition('failover'))
             ->arrayNode('platforms')
                 ->scalarPrototype()->end()
             ->end()
-            ->stringNode('rate_limiter')->cannotBeEmpty()->end()
+            ->scalarNode('rate_limiter')->cannotBeEmpty()->end()
         ->end()
     ->end();

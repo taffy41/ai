@@ -17,6 +17,6 @@ return (new ArrayNodeDefinition('memory'))
     ->useAttributeAsKey('name')
     ->arrayPrototype()
         ->children()
-            ->stringNode('strategy')->cannotBeEmpty()->end()
+            ->scalarNode('strategy')->cannotBeEmpty()->end()
         ->end()
     ->end();
