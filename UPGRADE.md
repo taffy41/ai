@@ -1,6 +1,18 @@
 UPGRADE FROM 0.9 to 0.10
 ========================
 
+Agent
+-----
+
+ * `SystemPromptInputProcessor` and `MemoryInputProcessor` now modify the message bag in place
+   instead of replacing it with a clone, so injected system messages and messages appended during
+   the agent run (e.g. tool calls) end up in the caller's bag. To keep your bag untouched:
+
+   ```diff
+   -$agent->call($messages);
+   +$agent->call(clone $messages);
+   ```
+
 Platform
 --------
 
