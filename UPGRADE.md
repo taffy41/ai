@@ -46,6 +46,18 @@ Platform
    picks the first provider in array order whose catalog owns the model; order the providers to
    disambiguate model ids exposed by more than one of them.
 
+ * `PlatformInterface::invoke()` now accepts `string|Model` for its first argument, and
+   `ProviderInterface::invoke()` and `ProviderInterface::supports()` were widened the same way. Custom
+   implementations and decorators must widen their signatures accordingly:
+
+   ```diff
+   -public function invoke(string $model, array|string|object $input, array $options = []): DeferredResult
+   +public function invoke(string|Model $model, array|string|object $input, array $options = []): DeferredResult
+
+   -public function supports(string $model): bool
+   +public function supports(string|Model $model): bool
+   ```
+
 Store
 -----
 
