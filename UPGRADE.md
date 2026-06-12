@@ -70,6 +70,22 @@ Platform
    +public function supports(string|Model $model): bool
    ```
 
+ * The Anthropic, Generic, OpenAI, and OpenResponses bridges now throw `ExceedContextSizeException`
+   instead of `BadRequestException` when a 400 response reports a context overflow. As
+   `ExceedContextSizeException` does not extend `BadRequestException`, catch it explicitly:
+
+   ```diff
+   +use Symfony\AI\Platform\Exception\ExceedContextSizeException;
+
+    try {
+        $result = $platform->invoke($model, $messages)->getResult();
+   +} catch (ExceedContextSizeException $e) {
+   +    // shrink the conversation and retry
+    } catch (BadRequestException $e) {
+        // ...
+    }
+   ```
+
 Store
 -----
 
