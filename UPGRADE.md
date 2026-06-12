@@ -13,6 +13,25 @@ Agent
    +$agent->call(clone $messages);
    ```
 
+AI Bundle
+---------
+
+ * Agent tools are now opt-in. Previously, when an agent did not configure the `tools` option, all
+   services tagged with `ai.tool` (e.g. classes using the `#[AsTool]` attribute) were injected into
+   the agent's toolbox. Now an agent without the `tools` option (or with `tools` set to `null` or an
+   empty list) gets no toolbox at all. To keep the previous behavior, enable tools explicitly:
+
+   ```diff
+    ai:
+        agent:
+            my_agent:
+                model: 'gpt-4o-mini'
+   +            tools: true
+   ```
+
+   Configuring an explicit list of tools, or `tools: false`, keeps working unchanged. Additionally,
+   enabling `prompt.include_tools` for an agent without configured tools now throws an exception.
+
 Platform
 --------
 
