@@ -89,9 +89,11 @@ Platform
    +public function supports(string|Model $model): bool
    ```
 
- * The Anthropic, Generic, OpenAI, and OpenResponses bridges now throw `ExceedContextSizeException`
-   instead of `BadRequestException` when a 400 response reports a context overflow. As
-   `ExceedContextSizeException` does not extend `BadRequestException`, catch it explicitly:
+ * The Anthropic, Generic, OpenAI, OpenResponses, Cerebras, DeepSeek, Mistral, Cohere, Gemini,
+   Perplexity, Scaleway, and VertexAI bridges now throw `ExceedContextSizeException` when a 400
+   response reports a context overflow (previously `BadRequestException`, or a generic
+   `RuntimeException` for the Scaleway and VertexAI bridges). As `ExceedContextSizeException` does
+   not extend `BadRequestException`, catch it explicitly:
 
    ```diff
    +use Symfony\AI\Platform\Exception\ExceedContextSizeException;
