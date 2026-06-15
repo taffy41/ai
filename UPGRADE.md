@@ -13,6 +13,15 @@ Agent
    +$agent->call(clone $messages);
    ```
 
+   Alternatively, if you do want to keep the appended messages in your bag (e.g. for conversation
+   history) but need to render or re-send only the conversational messages, strip the tool-call
+   messages and tool-call-only assistant messages with the new `MessageBag::withoutToolMessages()`:
+
+   ```diff
+   -$messages->withoutSystemMessage()->getMessages();
+   +$messages->withoutSystemMessage()->withoutToolMessages()->getMessages();
+   ```
+
 AI Bundle
 ---------
 
