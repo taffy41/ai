@@ -22,6 +22,22 @@ Agent
    +$messages->withoutSystemMessage()->withoutToolMessages()->getMessages();
    ```
 
+ * The `maxToolCalls` parameter of `AgentProcessor` now defaults to `50` instead of `null`. The tool-calling
+   loop is therefore bounded out of the box and throws a `MaxIterationsExceededException` once the limit is
+   reached. If you relied on the previous unbounded behaviour, pass `null` explicitly:
+
+   ```diff
+   -$processor = new AgentProcessor($toolbox);
+   +$processor = new AgentProcessor($toolbox, maxToolCalls: null);
+   ```
+
+   To raise or lower the cap instead, pass the desired value:
+
+   ```diff
+   -$processor = new AgentProcessor($toolbox);
+   +$processor = new AgentProcessor($toolbox, maxToolCalls: 75);
+   ```
+
 AI Bundle
 ---------
 
@@ -40,6 +56,19 @@ AI Bundle
 
    Configuring an explicit list of tools, or `tools: false`, keeps working unchanged. Additionally,
    enabling `prompt.include_tools` for an agent without configured tools now throws an exception.
+
+ * Tool-calling agents are now bounded by default. Following the `AgentProcessor` change above, an
+   agent's tool-calling loop is capped at `50` iterations and throws a `MaxIterationsExceededException`
+   once exceeded. Configure the cap per agent via the new `max_tool_calls` option, or set it to `null`
+   to restore the previous unbounded behaviour:
+
+   ```diff
+    ai:
+        agent:
+            my_agent:
+                model: 'gpt-4o-mini'
+   +            max_tool_calls: null # or any integer to adjust the cap
+   ```
 
 Platform
 --------
