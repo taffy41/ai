@@ -1,3 +1,14 @@
+UPGRADE FROM 0.10 to 0.11
+=========================
+
+Store
+-----
+
+ * Add support for `ScopingHttpClient` in Typesense `Store`
+ * The `endpointUrl` parameter for Typesense `Store` has been removed
+ * The `apiKey` parameter for Typesense `Store` has been removed
+ * A `StoreFactory` has been introduced for Typesense `Store`
+
 UPGRADE FROM 0.9 to 0.10
 ========================
 
@@ -150,6 +161,10 @@ Store
 
  * The `ClickHouse`, `Redis`, `SurrealDb`, and `InMemory` store implementations are now `final`.
    Extending them is no longer possible; compose or decorate `StoreInterface` instead.
+ * Add support for `ScopingHttpClient` in Typesense `Store`
+ * The `endpointUrl` parameter for Typesense `Store` has been removed
+ * The `apiKey` parameter for Typesense `Store` has been removed
+ * A `StoreFactory` has been introduced for Typesense `Store`
 
 UPGRADE FROM 0.8 to 0.9
 =======================
