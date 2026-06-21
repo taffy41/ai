@@ -30,7 +30,7 @@ require_once dirname(__DIR__).'/bootstrap.php';
 
 $store = new Store(
     httpClient: http_client(),
-    url: env('SUPABASE_URL'),
+    endpoint: env('SUPABASE_URL'),
     apiKey: env('SUPABASE_API_KEY'),
     table: env('SUPABASE_TABLE'),
     vectorFieldName: env('SUPABASE_VECTOR_FIELD'),

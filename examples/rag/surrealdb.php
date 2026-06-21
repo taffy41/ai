@@ -31,7 +31,7 @@ require_once dirname(__DIR__).'/bootstrap.php';
 // initialize the store
 $store = new Store(
     httpClient: http_client(),
-    endpointUrl: env('SURREALDB_HOST'),
+    endpoint: env('SURREALDB_HOST'),
     user: env('SURREALDB_USER'),
     password: env('SURREALDB_PASS'),
     namespace: 'default',

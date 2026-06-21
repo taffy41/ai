@@ -51,6 +51,31 @@ Platform
    `$model->supports(Capability::INPUT_MULTIPLE)` for an embedding model will now receive `false`; pass
    the full array of texts to `Platform::invoke()` directly instead — the bridge handles batching.
 
+ * Base URLs are now normalized across all bridges: a trailing slash on a configured base URL is
+   tolerated and no longer produces a double slash in request URLs.
+
+ * The Azure bridge now accepts a full base URL *with* scheme and no longer rejects it. A bare host
+   keeps working (the `https` scheme is assumed when none is given), so existing configurations are
+   unaffected, but you can now point it at an `http://` gateway:
+
+   ```diff
+   -// previously a scheme was rejected
+   -Factory::createPlatform('my-resource.openai.azure.com', ...);
+   +Factory::createPlatform('https://my-resource.openai.azure.com', ...); // also still: 'my-resource.openai.azure.com'
+   ```
+
+ * The `$hostUrl` argument of the Decart and Docker Model Runner factories and clients has been
+   renamed to `$baseUrl` for consistency with the other bridges. Positional usage is unaffected;
+   update named arguments:
+
+   ```diff
+   -Symfony\AI\Platform\Bridge\Decart\Factory::createPlatform($apiKey, hostUrl: 'https://api.decart.ai/v1');
+   +Symfony\AI\Platform\Bridge\Decart\Factory::createPlatform($apiKey, baseUrl: 'https://api.decart.ai/v1');
+   ```
+
+ * The Albert factory no longer throws when the base URL ends with a trailing slash; the slash is
+   stripped instead.
+
 Store
 -----
 
@@ -59,6 +84,24 @@ Store
  * The `apiKey` parameter for Typesense `Store` has been removed
  * A `StoreFactory` has been introduced for Typesense `Store`
  * The `accountId`, `apiKey`, and `endpointUrl` parameter for Cloudflare `Store` has been removed, use `StoreFactory` instead
+
+ * Endpoint URLs are now normalized across all HTTP store bridges: a trailing slash is tolerated, and
+   path-prefixed endpoints behind a reverse proxy keep their prefix.
+
+ * The endpoint constructor argument has been renamed to `$endpoint` for consistency across bridges.
+   Positional usage is unaffected; update named arguments:
+
+   ```diff
+   -new Symfony\AI\Store\Bridge\Supabase\Store($httpClient, url: $url, ...);
+   +new Symfony\AI\Store\Bridge\Supabase\Store($httpClient, endpoint: $url, ...);
+   ```
+
+   | Bridge          | Old argument   | New argument |
+   | --------------- | -------------- | ------------ |
+   | ManticoreSearch | `$host`        | `$endpoint`  |
+   | Milvus          | `$endpointUrl` | `$endpoint`  |
+   | Supabase        | `$url`         | `$endpoint`  |
+   | SurrealDb       | `$endpointUrl` | `$endpoint`  |
 
 UPGRADE FROM 0.9 to 0.10
 ========================
