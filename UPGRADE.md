@@ -1,6 +1,27 @@
 UPGRADE FROM 0.10 to 0.11
 =========================
 
+Platform
+--------
+
+ * `ToolCallMessage` now holds `Content\ContentInterface` parts instead of a single string, mirroring
+   `UserMessage`. Its constructor takes a variadic `ContentInterface ...$content`, `getContent()` returns
+   `Content\ContentInterface[]`, and a new `asText()` returns the flattened text. Wrap plain strings in
+   `Content\Text` when instantiating the class directly:
+
+   ```diff
+   -new ToolCallMessage($toolCall, 'result');
+   +new ToolCallMessage($toolCall, new Text('result'));
+   ```
+
+   `Message::ofToolCall()` keeps accepting strings and upcasts them to `Content\Text`, so call sites using
+   the factory are unaffected. To read the textual result, use `asText()` instead of `getContent()`:
+
+   ```diff
+   -$message->getContent();
+   +$message->asText();
+   ```
+
 Store
 -----
 
