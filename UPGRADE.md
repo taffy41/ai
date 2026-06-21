@@ -161,34 +161,17 @@ Store
 
  * The `ClickHouse`, `Redis`, `SurrealDb`, and `InMemory` store implementations are now `final`.
    Extending them is no longer possible; compose or decorate `StoreInterface` instead.
- * Add support for `ScopingHttpClient` in Typesense `Store`
- * The `endpointUrl` parameter for Typesense `Store` has been removed
- * The `apiKey` parameter for Typesense `Store` has been removed
- * A `StoreFactory` has been introduced for Typesense `Store`
 
 UPGRADE FROM 0.8 to 0.9
 =======================
 
-Platform
---------
+Chat
+----
 
- * The OpenAI Responses bridges return `MultiPartResult` instead of `ChoiceResult` for multi-item output. Iterate parts instead of treating them as alternative completions:
-
-   ```diff
-   -if ($result instanceof ChoiceResult) {
-   -    foreach ($result->getContent() as $alternative) { /* ... */ }
-   -}
-   +if ($result instanceof MultiPartResult) {
-   +    foreach ($result as $part) { /* ... */ }
-   +}
-   ```
-
- * Reasoning summaries from OpenAI Responses bridges are exposed as one `ThinkingResult` per `summary_text` chunk instead of being folded into a `TextResult`:
-
-   ```diff
-   -$part instanceof TextResult ? $part->getContent() : null
-   +$part instanceof ThinkingResult ? $part->getContent() : null
-   ```
+ * `MessageNormalizer` now emits an ordered `parts` field for `AssistantMessage` to preserve the sequence
+   of `Text`, `Thinking`, and `ToolCall` blocks. Payloads stored under the previous format (only `content`
+   and `toolsCalls`) still denormalize, but the ordering between text and tool calls is not reconstructed.
+   Re-normalize stored chat history to upgrade it to the new format.
 
 Mate
 ----
@@ -215,16 +198,26 @@ Mate
 
    After updating, run `composer dump-autoload`.
 
-Chat
-----
-
- * `MessageNormalizer` now emits an ordered `parts` field for `AssistantMessage` to preserve the sequence
-   of `Text`, `Thinking`, and `ToolCall` blocks. Payloads stored under the previous format (only `content`
-   and `toolsCalls`) still denormalize, but the ordering between text and tool calls is not reconstructed.
-   Re-normalize stored chat history to upgrade it to the new format.
-
 Platform
 --------
+
+ * The OpenAI Responses bridges return `MultiPartResult` instead of `ChoiceResult` for multi-item output. Iterate parts instead of treating them as alternative completions:
+
+   ```diff
+   -if ($result instanceof ChoiceResult) {
+   -    foreach ($result->getContent() as $alternative) { /* ... */ }
+   -}
+   +if ($result instanceof MultiPartResult) {
+   +    foreach ($result as $part) { /* ... */ }
+   +}
+   ```
+
+ * Reasoning summaries from OpenAI Responses bridges are exposed as one `ThinkingResult` per `summary_text` chunk instead of being folded into a `TextResult`:
+
+   ```diff
+   -$part instanceof TextResult ? $part->getContent() : null
+   +$part instanceof ThinkingResult ? $part->getContent() : null
+   ```
 
  * `AssistantMessage` takes a variadic list of `ContentInterface` parts instead of separate
    `content`/`toolCalls`/`thinkingContent`/`thinkingSignature` arguments. New content classes:
@@ -888,20 +881,6 @@ Platform
 UPGRADE FROM 0.1 to 0.2
 =======================
 
-AI Bundle
----------
-
- * Agents are now injected using their configuration name directly, instead of appending Agent or MultiAgent
-
-   ```diff
-   public function __construct(
-   -   private AgentInterface $blogAgent,
-   +   private AgentInterface $blog,
-   -   private AgentInterface $supportMultiAgent,
-   +   private AgentInterface $support,
-   ) {}
-   ```
-
 Agent
 -----
 
@@ -915,6 +894,20 @@ Agent
 
    // After
    $processor = new MemoryInputProcessor([$input1, $input2]);
+   ```
+
+AI Bundle
+---------
+
+ * Agents are now injected using their configuration name directly, instead of appending Agent or MultiAgent
+
+   ```diff
+   public function __construct(
+   -   private AgentInterface $blogAgent,
+   +   private AgentInterface $blog,
+   -   private AgentInterface $supportMultiAgent,
+   +   private AgentInterface $support,
+   ) {}
    ```
 
 Platform
