@@ -26,7 +26,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
             - name: Fetch base branch for LICENSE validation
               run: git fetch origin ${{ github.base_ref || 'main' }} --depth=1
@@ -51,7 +51,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
             - name: Fetch base branch for LICENSE validation
               run: git fetch origin ${{ github.base_ref || 'main' }} --depth=1
@@ -76,7 +76,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
             - name: Fetch base branch for LICENSE validation
               run: git fetch origin ${{ github.base_ref || 'main' }} --depth=1
@@ -101,7 +101,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
             - name: Fetch base branch for LICENSE validation
               run: git fetch origin ${{ github.base_ref || 'main' }} --depth=1
@@ -126,7 +126,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
             - name: Fetch base branch for LICENSE validation
               run: git fetch origin ${{ github.base_ref || 'main' }} --depth=1
@@ -163,7 +163,7 @@ jobs:
                       version: "^2.0"
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
             - name: Validate ${{ matrix.package }} version in all composer.json files
               run: .github/scripts/validate-dependency-versions.sh "${{ matrix.package }}" "${{ matrix.version }}"
