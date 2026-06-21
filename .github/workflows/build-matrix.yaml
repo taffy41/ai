@@ -67,7 +67,7 @@ jobs:
             mate-bridges-include: ${{ steps.set-matrix.outputs.mate-bridges-include }}
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
             - name: Set matrix
               id: set-matrix
