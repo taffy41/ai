@@ -15,20 +15,29 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v7
+              with:
+                  # Fetch the merge commit and its parents so the diff base can be
+                  # derived from the merge commit itself (see BASE_SHA below).
+                  fetch-depth: 2
 
-            - name: Fetch base commit and tags
-              run: |
-                  git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
-                  git fetch --tags --depth=1 origin
+            - name: Fetch tags
+              run: git fetch --tags --depth=1 origin
 
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
                   php-version: 8.5
 
+            # The checked-out HEAD is the GitHub merge commit (refs/pull/N/merge), which
+            # GitHub regenerates against the current base branch tip. Its first parent is
+            # therefore the real base the PR is merged onto, while
+            # github.event.pull_request.base.sha can be stale (frozen at the last
+            # synchronize) and would pull in unrelated commits merged in the meantime.
+            # Diffing against the merge commit's first parent yields exactly the PR's own
+            # changes regardless of how far the base advanced.
             - name: Validate CHANGELOG.md / UPGRADE.md entries
               env:
                   PR_BODY: ${{ github.event.pull_request.body }}
                   PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
-                  BASE_SHA: ${{ github.event.pull_request.base.sha }}
-              run: php .github/scripts/validate-changelog-upgrade.php
+              run: |
+                  BASE_SHA="$(git rev-parse HEAD^1)" php .github/scripts/validate-changelog-upgrade.php
