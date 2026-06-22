@@ -197,6 +197,10 @@ deptrac:
       collectors:
         - type: classLike
           value: Symfony\\AI\\Platform\\Bridge\\Meta\\.*
+    - name: MiniMaxPlatform
+      collectors:
+        - type: classLike
+          value: Symfony\\AI\\Platform\\Bridge\\MiniMax\\.*
     - name: MistralPlatform
       collectors:
         - type: classLike
@@ -483,6 +487,8 @@ deptrac:
       - PlatformComponent
       - GenericPlatform
     MetaPlatform:
+      - PlatformComponent
+    MiniMaxPlatform:
       - PlatformComponent
     MistralPlatform:
       - PlatformComponent
