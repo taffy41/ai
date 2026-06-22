@@ -145,7 +145,7 @@ Supported Models & Platforms
   * `Mistral Embed`_ with `Mistral`_ and `OpenRouter`_ as Platform
   * `Qwen`_ with `OpenRouter`_ as Platform
 * **Other Models**
-  * `OpenAI's Dall·E`_ with `OpenAI`_ as Platform
+  * `OpenAI's GPT Image`_ with `OpenAI`_ as Platform (generation and editing)
   * `OpenAI's Whisper`_ with `OpenAI`_ and `Azure`_ as Platform
   * `Mistral OCR`_ with `Mistral`_ as Platform
   * `LM Studio Catalog`_ and `HuggingFace`_ Models  with `LM Studio`_ as Platform.
@@ -1395,7 +1395,7 @@ Code Examples
 .. _`Voyage's Embeddings`: https://docs.voyageai.com/docs/embeddings
 .. _`Voyage`: https://www.voyageai.com/
 .. _`Mistral Embed`: https://www.mistral.ai/
-.. _`OpenAI's Dall·E`: https://platform.openai.com/docs/guides/image-generation
+.. _`OpenAI's GPT Image`: https://platform.openai.com/docs/guides/image-generation
 .. _`OpenAI's Whisper`: https://platform.openai.com/docs/guides/speech-to-text
 .. _`Mistral OCR`: https://docs.mistral.ai/api/endpoint/ocr
 .. _`HuggingFace`: https://huggingface.co/

@@ -9,25 +9,21 @@
  * file that was distributed with this source code.
  */
 
-use Symfony\AI\Platform\Bridge\OpenAi\DallE\ImageResult;
 use Symfony\AI\Platform\Bridge\OpenAi\Factory;
+use Symfony\AI\Platform\Result\BinaryResult;
 
 require_once dirname(__DIR__).'/bootstrap.php';
 
 $platform = Factory::createPlatform(env('OPENAI_API_KEY'), http_client());
 
 $result = $platform->invoke(
-    model: 'dall-e-3',
+    model: 'gpt-image-1',
     input: 'A cartoon-style elephant with a long trunk and large ears.',
-    options: [
-        'response_format' => 'url', // Generate response as URL
-    ],
 )->getResult();
 
-assert($result instanceof ImageResult);
+assert($result instanceof BinaryResult);
 
-echo 'Revised Prompt: '.$result->getRevisedPrompt().\PHP_EOL.\PHP_EOL;
+$file = sys_get_temp_dir().'/openai-gpt-image-1.png';
+$result->asFile($file);
 
-foreach ($result->getContent() as $index => $image) {
-    echo 'Image '.$index.': '.$image->url.\PHP_EOL;
-}
+echo 'Image saved to '.$file.\PHP_EOL;
