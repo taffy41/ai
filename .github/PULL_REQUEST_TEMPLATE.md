@@ -17,4 +17,9 @@ Additionally (see https://symfony.com/releases):
  - Update/add documentation as required (we can help!)
  - Changelog entry should follow https://symfony.com/doc/current/contributing/code/conventions.html#writing-a-changelog-entry
  - Never break backward compatibility (see https://symfony.com/bc).
+
+CHANGELOG.md/UPGRADE.md checks enforced on every PR:
+ - A bug fix only (New feature? = no) must not change any CHANGELOG.md/UPGRADE.md, unless it's a BC break (then add the "BC Break" label + an UPGRADE.md entry).
+ - A backward-compatibility break needs an UPGRADE.md entry AND the "BC Break" label (the two go together).
+ - Only add entries to the upcoming (unreleased) version section.
 -->

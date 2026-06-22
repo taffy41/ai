@@ -174,11 +174,16 @@ When deciding whether a piece belongs in the cookbook, apply these tests:
 - Document breaking changes in the root `UPGRADE.md` file
 - Format: Use version headers like `UPGRADE FROM 0.X to 0.Y` with sections per component
 - Include code examples showing before/after changes with diff syntax
+- Every `UPGRADE.md` entry must be paired with the `BC Break` PR label, and adding the `BC Break` label requires a matching `UPGRADE.md` entry in the upcoming (unreleased) section
 
 ### CHANGELOG.md
 - Each component has its own `CHANGELOG.md` in its root directory
 - Add entries for new features, and deprecations under the appropriate version heading
 - Format entries as bullet points starting with "Add", "Fix", "Deprecate", etc.
+- Bug-fix-only PRs (`Bug fix? = yes`, `New feature? = no`) must not modify any `CHANGELOG.md`/`UPGRADE.md` — unless the fix is itself a BC break, in which case add the `BC Break` label and document it in `UPGRADE.md`
+- Only add entries to the upcoming (unreleased) version section; sections already released (version `<=` the latest git tag) are frozen
+
+These conventions are enforced on every PR by `.github/workflows/changelog.yaml`.
 
 ### Pull Requests
 - Always use the PR template from `.github/PULL_REQUEST_TEMPLATE.md`
