@@ -1008,13 +1008,25 @@ trailing commas, unclosed strings, dangling colons, partial ``true``/``false``/`
 The method is ``static``, stateless, and dependency-free. It returns ``null`` and sets ``$errorMessage`` to the
 ``json_last_error_msg()`` text only when the input is unrecoverable. On success ``$errorMessage`` is reset to ``null``.
 
+When you already have a streaming ``DeferredResult``, ``asPartialJsonStream()`` wires the parser to the text-delta
+stream for you and yields the recovered structure each time it changes::
+
+    $deferred = $platform->invoke('gpt-5-mini', $messages, ['stream' => true]);
+
+    foreach ($deferred->asPartialJsonStream() as $partial) {
+        // render the partial structure (array/object/scalar)
+    }
+
+The generator skips deltas that leave the recovered structure unchanged and silently swallows buffers that are not
+recoverable yet, so a consumer can treat each iteration as a denser snapshot of the same logical value.
+
 Code Examples
 ~~~~~~~~~~~~~
 
 * `Structured Output with PHP class`_
 * `Structured Output with array`_
 * `Populating existing objects`_
-* `Partial JSON parsing for streaming output`_
+* `Partial JSON streaming via DeferredResult`_
 
 Server Tools
 ------------
@@ -1372,7 +1384,7 @@ Code Examples
 .. _`Structured Output with PHP class`: https://github.com/symfony/ai/blob/main/examples/openai/structured-output-math.php
 .. _`Structured Output with array`: https://github.com/symfony/ai/blob/main/examples/openai/structured-output-clock.php
 .. _`Populating existing objects`: https://github.com/symfony/ai/blob/main/examples/platform/structured-output-populate-object.php
-.. _`Partial JSON parsing for streaming output`: https://github.com/symfony/ai/blob/main/examples/platform/partial-json-parser.php
+.. _`Partial JSON streaming via DeferredResult`: https://github.com/symfony/ai/blob/main/examples/platform/partial-json-stream.php
 .. _`Parallel GPT Calls`: https://github.com/symfony/ai/blob/main/examples/misc/parallel-chat-gpt.php
 .. _`Parallel Embeddings Calls`: https://github.com/symfony/ai/blob/main/examples/misc/parallel-embeddings.php
 .. _`LM Studio`: https://lmstudio.ai/
