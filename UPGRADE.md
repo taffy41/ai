@@ -4,6 +4,29 @@ UPGRADE FROM 0.10 to 0.11
 Platform
 --------
 
+ * The OpenAI `DallE` bridge has been renamed to `Image`, since OpenAI retired the DALL-E models in
+   favor of the `gpt-image-*` family (which the renamed bridge serves). Update namespace imports:
+
+   ```diff
+   -use Symfony\AI\Platform\Bridge\OpenAi\DallE;
+   +use Symfony\AI\Platform\Bridge\OpenAi\Image;
+   ```
+
+   The `dall-e-2` and `dall-e-3` catalog entries have been removed because the models no longer exist
+   on OpenAI's API. Use a `gpt-image-*` model instead; these return base64-encoded images only (the
+   `response_format` option is no longer supported).
+
+   The bridge-specific `ImageResult`, `Base64Image`, and `UrlImage` classes have been removed in favor
+   of the generic result types used by the other multi-modal bridges: a single image is now a
+   `Result\BinaryResult`, and multiple images (`n` > 1) a `Result\MultiPartResult` of `BinaryResult`s.
+
+   ```diff
+   -$result = $platform->invoke('dall-e-3', $prompt, ['response_format' => 'url'])->getResult();
+   -$url = $result->getContent()[0]->url;
+   +$result = $platform->invoke('gpt-image-1', $prompt)->getResult();
+   +$result->asFile('image.png'); // Result\BinaryResult
+   ```
+
  * `ToolCallMessage` now holds `Content\ContentInterface` parts instead of a single string, mirroring
    `UserMessage`. Its constructor takes a variadic `ContentInterface ...$content`, `getContent()` returns
    `Content\ContentInterface[]`, and a new `asText()` returns the flattened text. Wrap plain strings in
