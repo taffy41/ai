@@ -253,6 +253,33 @@ Provider-level events (:class:`Symfony\\AI\\Platform\\Event\\InvocationEvent` an
 :class:`Symfony\\AI\\Platform\\Event\\ResultEvent`) still fire inside the selected
 provider for per-invocation concerns.
 
+Result Conversion Events
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+``ResultEvent`` fires when the deferred result *object* is created, before the raw
+result is converted. Because :class:`Symfony\\AI\\Platform\\Result\\DeferredResult` is
+lazy, the actual result is only available later. To act on the resolved result, listen
+to :class:`Symfony\\AI\\Platform\\Event\\ResultConvertedEvent`, which is dispatched once
+the result has been converted (and :class:`Symfony\\AI\\Platform\\Event\\ResultErrorEvent`
+when conversion fails)::
+
+    use Symfony\AI\Platform\Event\ResultConvertedEvent;
+    use Symfony\AI\Platform\Event\ResultErrorEvent;
+
+    $eventDispatcher->addListener(ResultConvertedEvent::class, function (ResultConvertedEvent $event) {
+        // $event->getResult() is the resolved result; a listener may replace it via setResult()
+    });
+
+    $eventDispatcher->addListener(ResultErrorEvent::class, function (ResultErrorEvent $event) {
+        // $event->getError() carries the conversion exception (still rethrown to the caller)
+    });
+
+A listener exception from ``ResultConvertedEvent`` propagates to the caller and does
+not trigger ``ResultErrorEvent``, which fires only when the conversion itself fails.
+
+For a streamed result, ``ResultConvertedEvent`` fires when the stream result is created,
+not when it is fully consumed.
+
 Options
 -------
 
