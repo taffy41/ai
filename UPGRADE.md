@@ -52,6 +52,7 @@ Store
  * The `endpointUrl` parameter for Typesense `Store` has been removed
  * The `apiKey` parameter for Typesense `Store` has been removed
  * A `StoreFactory` has been introduced for Typesense `Store`
+ * The `accountId`, `apiKey`, and `endpointUrl` parameter for Cloudflare `Store` has been removed, use `StoreFactory` instead
 
 UPGRADE FROM 0.9 to 0.10
 ========================
