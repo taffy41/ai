@@ -45,6 +45,12 @@ Platform
    +$message->asText();
    ```
 
+ * `Capability::INPUT_MULTIPLE` has been removed from all embedding models in the model catalogs (it is
+   kept on reranking models). Every embedding bridge already accepts multiple inputs in a single API
+   call, so the capability no longer carried meaning for embeddings. Code that branched on
+   `$model->supports(Capability::INPUT_MULTIPLE)` for an embedding model will now receive `false`; pass
+   the full array of texts to `Platform::invoke()` directly instead — the bridge handles batching.
+
 Store
 -----
 
