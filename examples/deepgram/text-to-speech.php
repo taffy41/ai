@@ -18,4 +18,4 @@ $platform = Factory::createPlatform(apiKey: env('DEEPGRAM_API_KEY'), httpClient:
 
 $result = $platform->invoke('aura-2-thalia-en', new Text('Hello world'));
 
-file_put_contents('php://stdout', $result->asBinary());
+echo $result->asBinary();

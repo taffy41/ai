@@ -23,4 +23,6 @@ $result = $platform->invoke('lucy-pro-i2i', Image::fromFile(dirname(__DIR__, 2).
     'prompt' => 'Colorize the walls',
 ]);
 
-echo $result->asBinary().\PHP_EOL;
+$result->asFile(__DIR__.'/image-editing.png');
+
+echo 'Image saved to image-editing.png'.\PHP_EOL;

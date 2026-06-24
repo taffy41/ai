@@ -33,4 +33,4 @@ $result = $platform->invoke('speech-2.6-hd', new Text('The real danger is not th
     ],
 ]);
 
-echo $result->asBinary().\PHP_EOL;
+echo $result->asBinary();

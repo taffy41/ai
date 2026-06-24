@@ -21,4 +21,6 @@ $platform = Factory::createPlatform(
 
 $result = $platform->invoke('lucy-pro-t2i', new Text('A cat on a kitchen table'));
 
-echo $result->asBinary().\PHP_EOL;
+$result->asFile(__DIR__.'/text-to-image.png');
+
+echo 'Image saved to text-to-image.png'.\PHP_EOL;
