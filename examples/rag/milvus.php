@@ -31,7 +31,7 @@ require_once dirname(__DIR__).'/bootstrap.php';
 // initialize the store
 $store = new Store(
     httpClient: http_client(),
-    endpointUrl: env('MILVUS_HOST'),
+    endpoint: env('MILVUS_HOST'),
     apiKey: env('MILVUS_API_KEY'),
     database: env('MILVUS_DATABASE'),
     collection: 'movies',

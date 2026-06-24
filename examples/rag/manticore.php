@@ -31,7 +31,7 @@ require_once dirname(__DIR__).'/bootstrap.php';
 // initialize the store
 $store = new Store(
     httpClient: http_client(),
-    host: 'http://127.0.0.1:9308',
+    endpoint: 'http://127.0.0.1:9308',
     table: 'movies',
     field: '_movie_vectors',
 );
