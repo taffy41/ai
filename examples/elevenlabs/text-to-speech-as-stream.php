@@ -22,12 +22,8 @@ $result = $platform->invoke('eleven_multilingual_v2', new Text('The first move i
     'stream' => true,
 ]);
 
-$content = '';
-
 foreach ($result->asStream() as $chunk) {
     if ($chunk instanceof BinaryDelta) {
         echo $chunk->getData();
     }
 }
-
-echo \PHP_EOL;

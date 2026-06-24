@@ -20,4 +20,6 @@ $result = $platform->invoke('image-01', new Text('A cat on a kitchen table'), [
     'aspect_ratio' => '16:9',
 ]);
 
-echo $result->asBinary().\PHP_EOL;
+$result->asFile(__DIR__.'/text-to-image.jpg');
+
+echo 'Image saved to text-to-image.jpg'.\PHP_EOL;

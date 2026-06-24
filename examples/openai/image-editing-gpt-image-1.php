@@ -28,7 +28,7 @@ $result = $platform->invoke(
 
 assert($result instanceof BinaryResult);
 
-$file = sys_get_temp_dir().'/openai-gpt-image-1-edit.png';
+$file = __DIR__.'/gpt-image-1-edit.png';
 $result->asFile($file);
 
 echo 'Edited image saved to '.$file.\PHP_EOL;

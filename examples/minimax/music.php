@@ -25,4 +25,4 @@ $result = $platform->invoke('music-1.5', new Text('A cheerful pop song with an u
     ],
 ]);
 
-echo $result->asBinary().\PHP_EOL;
+echo $result->asBinary();

@@ -29,4 +29,4 @@ $result = $platform->invoke('sonic-3', new Text('Hello world'), [
     ],
 ]);
 
-echo $result->asBinary().\PHP_EOL;
+echo $result->asBinary();

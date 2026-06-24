@@ -21,5 +21,4 @@ $result = $platform->invoke('google/gemini-3.1-flash-tts-preview', 'Hello world 
     'response_format' => 'pcm',
 ]);
 
-$result->asFile('/tmp/openrouter-speech.pcm');
-output()->writeln('Audio content saved to <comment>/tmp/openrouter-speech.pcm</comment>');
+echo $result->asBinary();

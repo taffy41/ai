@@ -20,4 +20,4 @@ $result = $platform->invoke('eleven_multilingual_v2', new Text('Hello world'), [
     'voice' => 'pqHfZKP75CvOlQylNhV4', // Bill
 ]);
 
-echo $result->asBinary().\PHP_EOL;
+echo $result->asBinary();
