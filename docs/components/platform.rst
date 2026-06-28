@@ -1098,6 +1098,7 @@ Server Tools
 
 Some platforms provide built-in server-side tools for enhanced capabilities without custom implementations:
 
+* :doc:`platform/openai-server-tools` - Web Search, File Search, Code Interpreter, Image Generation, MCP, Computer Use
 * :doc:`platform/anthropic-server-tools` - Bash, Text Editor, Code Execution
 * :doc:`platform/gemini-server-tools` - URL Context, Google Search, Code Execution
 * :doc:`platform/vertexai-server-tools` - URL Context, Google Search, Code Execution
