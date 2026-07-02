@@ -29,7 +29,7 @@
     "require": {
         "php": ">=8.2",
         "symfony/ai-mate": "^0.10",
-        "symfony/dependency-injection": "^7.3|^8.0"
+        "symfony/dependency-injection": "^6.4|^7.0|^8.0"
     },
     "require-dev": {
         "doctrine/doctrine-bundle": "^2.13|^3.0",
@@ -38,12 +38,12 @@
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpunit/phpunit": "^11.5.53",
-        "symfony/http-kernel": "^7.3|^8.0",
-        "symfony/mailer": "^7.3|^8.0",
-        "symfony/stopwatch": "^7.3|^8.0",
-        "symfony/translation": "^7.3|^8.0",
-        "symfony/var-dumper": "^7.3|^8.0",
-        "symfony/web-profiler-bundle": "^7.3|^8.0"
+        "symfony/http-kernel": "^6.4|^7.0|^8.0",
+        "symfony/mailer": "^6.4|^7.0|^8.0",
+        "symfony/stopwatch": "^6.4|^7.0|^8.0",
+        "symfony/translation": "^6.4|^7.0|^8.0",
+        "symfony/var-dumper": "^6.4|^7.0|^8.0",
+        "symfony/web-profiler-bundle": "^6.4|^7.0|^8.0"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "Required for Doctrine database profiler formatter",

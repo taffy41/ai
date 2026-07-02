@@ -15,8 +15,8 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 return (new ArrayNodeDefinition('cohere'))
     ->children()
-        ->stringNode('api_key')->isRequired()->end()
-        ->stringNode('http_client')
+        ->scalarNode('api_key')->isRequired()->end()
+        ->scalarNode('http_client')
             ->defaultValue('http_client')
             ->info('Service ID of the HTTP client to use')
         ->end()

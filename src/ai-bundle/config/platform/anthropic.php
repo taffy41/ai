@@ -15,9 +15,9 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 return (new ArrayNodeDefinition('anthropic'))
     ->children()
-        ->stringNode('api_key')->isRequired()->end()
-        ->stringNode('version')->defaultNull()->end()
-        ->stringNode('http_client')
+        ->scalarNode('api_key')->isRequired()->end()
+        ->scalarNode('version')->defaultNull()->end()
+        ->scalarNode('http_client')
             ->defaultValue('http_client')
             ->info('Service ID of the HTTP client to use')
         ->end()

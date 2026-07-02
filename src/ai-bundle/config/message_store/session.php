@@ -17,6 +17,6 @@ return (new ArrayNodeDefinition('session'))
     ->useAttributeAsKey('name')
     ->arrayPrototype()
         ->children()
-            ->stringNode('identifier')->cannotBeEmpty()->end()
+            ->scalarNode('identifier')->cannotBeEmpty()->end()
         ->end()
     ->end();

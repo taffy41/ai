@@ -15,9 +15,9 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 return (new ArrayNodeDefinition('albert'))
     ->children()
-        ->stringNode('api_key')->isRequired()->end()
-        ->stringNode('base_url')->isRequired()->end()
-        ->stringNode('http_client')
+        ->scalarNode('api_key')->isRequired()->end()
+        ->scalarNode('base_url')->isRequired()->end()
+        ->scalarNode('http_client')
             ->defaultValue('http_client')
             ->info('Service ID of the HTTP client to use')
         ->end()
