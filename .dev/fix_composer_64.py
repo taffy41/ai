@@ -1,7 +1,10 @@
 import json, glob, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-files = glob.glob(os.path.join(ROOT, "src", "**", "composer.json"), recursive=True)
+files = [
+    f for f in glob.glob(os.path.join(ROOT, "src", "**", "composer.json"), recursive=True)
+    if "/vendor/" not in f
+]
 files += glob.glob(os.path.join(ROOT, "examples", "composer.json"))
 
 LEAVE_EXACT = {

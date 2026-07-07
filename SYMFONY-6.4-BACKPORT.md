@@ -271,7 +271,45 @@ API swaps.
 
 ---
 
-## 7. Reference: composer constraint fixer script
+## 7. Push split repos to Bitbucket & tag
+
+After the monorepo-split workflow has run on GitHub (triggered by the push to
+`origin main`), pull each split repo and push to Bitbucket with the release tag.
+
+The split repos live in `~/git/forked-ai/`. Each has two remotes:
+
+| Local repo            | `origin` (GitHub)               | `bitbucket` (Bitbucket)                   |
+|-----------------------|---------------------------------|-------------------------------------------|
+| `forked-ai/ai-platform` | `taffy41/ai-platform`         | `wrenkitchens/forked-ai-platform`         |
+| `forked-ai/ai-agent`    | `taffy41/ai-agent`            | `wrenkitchens/forked-ai-agent`            |
+| `forked-ai/ai-store`    | `taffy41/ai-store`            | `wrenkitchens/forked-ai-store`            |
+| `forked-ai/ai-chat`     | `taffy41/ai-chat`             | `wrenkitchens/forked-ai-chat`             |
+| `forked-ai/ai-bundle`   | `taffy41/ai-bundle`           | `wrenkitchens/forked-ai-bundle`           |
+| `forked-ai/mcp-bundle`  | `taffy41/mcp-bundle`          | `wrenkitchens/forked-mcp-bundle`          |
+
+**Script (replace `v0.10.0` with the current upstream tag):**
+
+```bash
+cd ~/git/forked-ai
+
+for repo in ai-platform ai-agent ai-store ai-chat ai-bundle mcp-bundle; do
+  echo "=== $repo ==="
+  cd ~/git/forked-ai/$repo
+  git fetch origin
+  git reset --hard origin/main
+  git tag v0.10.0
+  git push bitbucket main --force
+  git push bitbucket v0.10.0
+  echo ""
+done
+```
+
+> **Note:** Use the same tag as the upstream Symfony AI release (e.g. `v0.10.0`).
+> The tag should match what consumers reference in their `composer.json`.
+
+---
+
+## 8. Reference: composer constraint fixer script
 
 Save as `.dev/fix_composer_64.py` (create the `.dev/` folder if needed). It is
 idempotent and only edits `src/**` + `examples/composer.json`.
@@ -326,7 +364,7 @@ print("\nTotal constraint changes:", total)
 
 ---
 
-## 8. Quick checklist
+## 9. Quick checklist
 
 - [ ] `upstream` remote exists
 - [ ] Backup branch created
@@ -338,10 +376,12 @@ print("\nTotal constraint changes:", total)
 - [ ] Removed upstream workflows, restored `monorepo-split.yml` from backup
 - [ ] PHP lint + composer JSON valid + tests pass
 - [ ] Committed (no Claude co-author, CS-Fixer run)
+- [ ] Pushed to `origin` (GitHub) — monorepo-split workflow runs automatically
+- [ ] Pulled split repos from GitHub, pushed to Bitbucket with version tag
 
 ---
 
-## 9. Sync history
+## 10. Sync history
 
 | Date       | Upstream HEAD        | Notes                                    |
 |------------|---------------------|------------------------------------------|
